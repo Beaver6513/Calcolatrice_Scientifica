@@ -1,0 +1,10 @@
+start at block start
+find next block operator
+
+find left and right block borders
+
+if right block is leaf {
+    delete parentheses of right block
+} else if right block is not leaf{
+    
+}
