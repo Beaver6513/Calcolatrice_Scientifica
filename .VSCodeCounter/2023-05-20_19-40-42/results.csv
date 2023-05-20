@@ -1,0 +1,14 @@
+"filename", "language", "Makefile", "C++", "C", "comment", "blank", "total"
+"/home/beaver/Calcolatrice-Scientifica/Makefile", "Makefile", 29, 0, 0, 0, 11, 40
+"/home/beaver/Calcolatrice-Scientifica/include/char_list.h", "C++", 0, 23, 0, 0, 15, 38
+"/home/beaver/Calcolatrice-Scientifica/include/derivative.h", "C++", 0, 5, 0, 0, 3, 8
+"/home/beaver/Calcolatrice-Scientifica/include/memory.h", "C++", 0, 15, 0, 0, 7, 22
+"/home/beaver/Calcolatrice-Scientifica/include/parser.h", "C++", 0, 16, 0, 0, 13, 29
+"/home/beaver/Calcolatrice-Scientifica/include/tree.h", "C++", 0, 40, 0, 0, 24, 64
+"/home/beaver/Calcolatrice-Scientifica/lib/char_list.c", "C", 0, 0, 209, 0, 38, 247
+"/home/beaver/Calcolatrice-Scientifica/lib/derivative.c", "C", 0, 0, 196, 0, 29, 225
+"/home/beaver/Calcolatrice-Scientifica/lib/memory.c", "C", 0, 0, 62, 0, 7, 69
+"/home/beaver/Calcolatrice-Scientifica/lib/parser.c", "C", 0, 0, 238, 0, 38, 276
+"/home/beaver/Calcolatrice-Scientifica/lib/tree.c", "C", 0, 0, 383, 0, 43, 426
+"/home/beaver/Calcolatrice-Scientifica/main.c", "C", 0, 0, 603, 2, 70, 675
+"Total", "-", 29, 99, 1691, 2, 298, 2119

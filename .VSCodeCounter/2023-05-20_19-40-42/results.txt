@@ -1,0 +1,41 @@
+Date : 2023-05-20 19:40:42
+Directory : /home/beaver/Calcolatrice-Scientifica
+Total : 12 files,  1819 codes, 2 comments, 298 blanks, all 2119 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| C        |          6 |      1,691 |          2 |        225 |      1,918 |
+| C++      |          5 |         99 |          0 |         62 |        161 |
+| Makefile |          1 |         29 |          0 |         11 |         40 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                       | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                          |         12 |      1,819 |          2 |        298 |      2,119 |
+| . (Files)                                                  |          2 |        632 |          2 |         81 |        715 |
+| include                                                    |          5 |         99 |          0 |         62 |        161 |
+| lib                                                        |          5 |      1,088 |          0 |        155 |      1,243 |
++------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                   | language | code       | comment    | blank      | total      |
++------------------------------------------------------------+----------+------------+------------+------------+------------+
+| /home/beaver/Calcolatrice-Scientifica/Makefile             | Makefile |         29 |          0 |         11 |         40 |
+| /home/beaver/Calcolatrice-Scientifica/include/char_list.h  | C++      |         23 |          0 |         15 |         38 |
+| /home/beaver/Calcolatrice-Scientifica/include/derivative.h | C++      |          5 |          0 |          3 |          8 |
+| /home/beaver/Calcolatrice-Scientifica/include/memory.h     | C++      |         15 |          0 |          7 |         22 |
+| /home/beaver/Calcolatrice-Scientifica/include/parser.h     | C++      |         16 |          0 |         13 |         29 |
+| /home/beaver/Calcolatrice-Scientifica/include/tree.h       | C++      |         40 |          0 |         24 |         64 |
+| /home/beaver/Calcolatrice-Scientifica/lib/char_list.c      | C        |        209 |          0 |         38 |        247 |
+| /home/beaver/Calcolatrice-Scientifica/lib/derivative.c     | C        |        196 |          0 |         29 |        225 |
+| /home/beaver/Calcolatrice-Scientifica/lib/memory.c         | C        |         62 |          0 |          7 |         69 |
+| /home/beaver/Calcolatrice-Scientifica/lib/parser.c         | C        |        238 |          0 |         38 |        276 |
+| /home/beaver/Calcolatrice-Scientifica/lib/tree.c           | C        |        383 |          0 |         43 |        426 |
+| /home/beaver/Calcolatrice-Scientifica/main.c               | C        |        603 |          2 |         70 |        675 |
+| Total                                                      |          |      1,819 |          2 |        298 |      2,119 |
++------------------------------------------------------------+----------+------------+------------+------------+------------+
