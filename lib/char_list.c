@@ -243,4 +243,5 @@ int to_string(struct string* str, int n) {
         char c = digit + '0';
         head_string_insert(str, c);
     }
+    return 0;
 }

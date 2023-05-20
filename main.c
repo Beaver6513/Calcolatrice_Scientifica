@@ -399,15 +399,21 @@ int main() {
                                 splice(t_string);
                                 group_string(t_string);
                                 load_tree(t_tree, t_string);
+                                delete_from_tree(t_tree, '[');
+                                delete_from_tree(t_tree, ']');
 
                                 struct string* der_string = (struct string*)malloc(sizeof(struct string));
                                 create_string(der_string);
 
                                 get_func_der(t_tree, der_string);
 
+                                print_string(*der_string);
+
                                 delete_string(der_string);
                                 delete_string(t_string);
                                 remove_tree(t_tree);
+                                while ((c = getchar()) != '\n' && c != EOF);
+                                getchar();
                             break;
                             case 2:
                                 struct string* s_params = (struct string*)malloc(sizeof(struct string));
