@@ -3,6 +3,7 @@
 #include "tree.h"
 #include "parser.h"
 #include <stdio.h>
+#include <ctype.h>
 
 int get_func_der(struct tree* tree, struct string* out_string) {
     struct c_node* index = out_string->head;
@@ -155,6 +156,18 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
 
         delete_string(exponent_str);
         delete_string(new_exponent_str);
+    } else if(node->data->head->character == 'x' && index->character == '@') {
+        index->character = 'x';
+    } else if(node->data->head->character == 'x' && index->character == '#') {
+        index->character = '1';
+    } else if(isdigit(node->data->head->character) && index->character == '@') {
+        struct c_node* t_index = node->data->tail;
+        while(t_index != NULL) {
+            insert_after(out_string, index, t_index->character);
+            t_index = t_index->previous;
+        }
+    } else if(isdigit(node->data->head->character) && index->character == '#') {
+        index->character = '0';
     }
 
     return 0;
