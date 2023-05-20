@@ -233,3 +233,14 @@ int insert_after(struct string* str, struct c_node* index, char key) {
     }
     return 0;
 }
+
+int to_string(struct string* str, int n) {
+    int digits = log10(n) + 1;
+
+    for(int i = 0 ; i < digits ; i++) {
+        int digit = (n / pow(10, i));
+        digit = digit % 10;
+        char c = digit + '0';
+        head_string_insert(str, c);
+    }
+}
