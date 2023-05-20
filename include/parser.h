@@ -14,6 +14,8 @@ int check_right_op(struct c_node* index, struct c_node* block_limit);
 
 int is_operator(char key);
 
+int is_operator_pow(char key);
+
 int expand_string(struct string* str);
 
 int splice(struct string* str);

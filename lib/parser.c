@@ -114,6 +114,15 @@ int is_operator(char key) {
     return false;
 }
 
+int is_operator_pow(char key) {
+    if (key == '+') return true;
+    if (key == '-') return true;
+    if (key == '*') return true;
+    if (key == '/') return true;
+
+    return false;
+}
+
 int move_to_next_block(struct c_node** index) {
     int count = 0;
 
