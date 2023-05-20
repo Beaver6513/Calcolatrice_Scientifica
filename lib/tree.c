@@ -13,6 +13,7 @@
 #define MULT 3
 #define DIV 4
 #define POW 5
+#define VAR 6
 
 int create_tree(struct tree* out_tree) {
     out_tree->tree_head = NULL;

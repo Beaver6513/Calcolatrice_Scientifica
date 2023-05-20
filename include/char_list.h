@@ -30,3 +30,7 @@ int modify(struct string* str, char key, char target);
 int compare(struct string* s_params, struct string* t_list);
 
 int get_number(struct string* string);
+
+int insert_before(struct string* str, struct c_node* index, char key);
+
+int insert_after(struct string* str, struct c_node* index, char key);

@@ -8,10 +8,6 @@ int move_to_next_block(struct c_node** index);
 
 int move_to_previous_block(struct c_node** index);
 
-int insert_before(struct string* str, struct c_node* index, char key);
-
-int insert_after(struct string* str, struct c_node* index, char key);
-
 int check_left_op(struct c_node* index, struct c_node* block_limit);
 
 int check_right_op(struct c_node* index, struct c_node* block_limit);

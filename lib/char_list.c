@@ -197,3 +197,39 @@ int get_number(struct string* string) {
     }
     return res;
 }
+
+int insert_before(struct string* str, struct c_node* index, char key) {
+    if(index->previous == NULL) {
+        head_string_insert(str, key);
+    } else {
+        struct c_node* temp = index->previous;
+        struct c_node* n = (struct c_node*)malloc(sizeof(struct c_node));
+
+        n->character = key;
+
+        n->previous = temp;
+        n->next = index;
+
+        index->previous = n;
+        temp->next = n;
+    }
+    return 0;
+}
+
+int insert_after(struct string* str, struct c_node* index, char key) {
+    if(index->next == NULL) {
+        tail_string_insert(str, key);
+    } else {
+        struct c_node* temp = index->next;
+        struct c_node* n = (struct c_node*)malloc(sizeof(struct c_node));
+
+        n->character = key;
+
+        n->previous = index;
+        n->next = temp;
+
+        index->next = n;
+        temp->previous = n;
+    }
+    return 0;
+}

@@ -2,6 +2,7 @@
 #include "memory.h"
 #include "parser.h"
 #include "tree.h"
+#include "derivative.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -350,6 +351,136 @@ int main() {
                 switch(choice) {
                     case 1:
                         system("clear");
+                        choice = 0;
+                        while(choice < 1 || choice > 3) {
+                            system("clear");
+                            printf("Search Method:\n1) By index\n2) By string\n3) Return to main menu\n\n");
+                            if((choice < 1 || choice > 3) && choice != 0) {
+                                printf("Select a valid number!\n\n");
+                            }
+                            printf("Choice: ");
+                            scanf("%d", &choice);
+                        }
+                        switch(choice) {
+                            case 1:
+                                choice = -1;
+                                int mem_lenght = 1;
+                                struct memory_node* index = mem.head;
+                                while(index != mem.tail) {
+                                    mem_lenght++;
+                                    index = index->next;
+                                }
+                                while(choice < 1 || choice > mem_lenght) {
+                                    system("clear");
+
+                                    if((choice < 0 || choice > mem_lenght) && choice != -1) {
+                                        printf("Location unknown!\n\n");
+                                    }
+                                    printf("Insert function index: ");
+                                    scanf("%d", &choice);
+                                }
+                                index = mem.head;
+                                for (int i = 0; i < (choice - 1) ; i++) {
+                                    index = index->next;
+                                }
+
+                                struct string* t_string = (struct string*)malloc(sizeof(struct string));
+                                create_string(t_string);
+                                struct tree* t_tree = (struct tree*)malloc(sizeof(struct tree));
+                                create_tree(t_tree);
+
+                                inorder_i(index->data->tree_head, t_string);
+                                t_string->head->previous = NULL;
+                                t_string->tail->next = NULL;
+                                modify(t_string, '[', '(');
+                                modify(t_string, ']', ')');
+                                delete(t_string, ' ');
+                                expand_string(t_string);
+                                splice(t_string);
+                                group_string(t_string);
+                                load_tree(t_tree, t_string);
+
+                                struct string* der_string = (struct string*)malloc(sizeof(struct string));
+                                create_string(der_string);
+
+                                get_func_der(t_tree, der_string);
+
+                                delete_string(der_string);
+                                delete_string(t_string);
+                                remove_tree(t_tree);
+                            break;
+                            case 2:
+                                struct string* s_params = (struct string*)malloc(sizeof(struct string));
+                                create_string(s_params);
+
+                                system("clear");
+                                printf("Input search parameters :  ");
+                                scan_string(s_params);
+                                printf("\n\n");
+                                s_params->head->previous = NULL;
+                                s_params->tail->next = NULL;
+
+                                struct memory_node* mem_index = mem.head;
+                                int is_equal = 0;
+                                int func_found = 0;
+                                int func_index = 1;
+                                while(mem_index != NULL) {
+                                    struct string* t_list = (struct string*)malloc(sizeof(struct string));
+                                    create_string(t_list);
+                                    inorder_i(mem_index->data->tree_head, t_list);
+                                    modify(t_list, '(', '[');
+                                    modify(t_list, ')', ']');
+                                    contract(t_list);
+
+                                    is_equal = compare(s_params, t_list);
+                                    if(is_equal == 1) {
+                                        func_found++;
+                                        printf("Index: %d\nFunction :   ", func_index);
+                                        print_string(*t_list);
+                                        printf("\n");
+                                    }
+
+                                    mem_index = mem_index ->next;
+                                    func_index++;
+                                    delete_string(t_list);
+                                }
+
+                                if(func_found == 0) {
+                                    printf("No function found!");
+                                }
+                                delete_string(s_params);
+
+
+                                choice = -1;
+                                mem_lenght = 1;
+                                index = mem.head;
+                                while(index != mem.tail) {
+                                    mem_lenght++;
+                                    index = index->next;
+                                }
+                                while(choice < 1 || choice > mem_lenght) {
+
+                                    if((choice < 0 || choice > mem_lenght) && choice != -1) {
+                                        printf("Location unknown!\n\n");
+                                    }
+                                    printf("Insert function index: ");
+                                    scanf("%d", &choice);
+                                }
+                                index = mem.head;
+                                for (int i = 0; i < (choice - 1) ; i++) {
+                                    index = index->next;
+                                }
+
+                                printf("Insert x value: ");
+
+                                
+                                while ((c = getchar()) != '\n' && c != EOF);
+                            break;
+                            case 3:
+                            break;
+                            default:
+                                exit(1);
+                        }
                     break;
                     case 2:
                         system("clear");
