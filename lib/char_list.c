@@ -5,9 +5,31 @@
 #include <math.h>
 #include <ctype.h>
 
+#ifdef __linux__ 
 #include <termios.h>            //termios, TCSANOW, ECHO, ICANON
 #include <unistd.h>             //STDIN_FILENO
+#elif _WIN32
+#include <conio.h>
+#else
 
+#endif
+
+
+
+
+#ifdef __linux__ 
+void flush_stdin() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+#elif _WIN32
+void flush_stdin() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+#else
+
+#endif
 int create_string(struct string* str) {
     str->head = NULL;
     str->tail = NULL;
@@ -52,28 +74,48 @@ int head_string_insert(struct string* str, char data) {
     return 0;
 }
 
+#ifdef __linux__ 
 int scan_string(struct string* str) {
     char c = 'a';
 
     static struct termios oldt, newt;
-    tcgetattr( STDIN_FILENO, &oldt);
+    tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
     newt.c_lflag &= ~(ICANON);
-    tcsetattr( STDIN_FILENO, TCSANOW, &newt);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
     str->head = NULL;
     str->tail = NULL;
 
-    while ((c = getchar()) != '\n' && c != EOF);
-    while(1) {
+    flush_stdin();
+    while (1) {
         c = getchar();
-        if(c == '\n') break;
+        if (c == '\n') break;
         tail_string_insert(str, c);
     }
 
-    tcsetattr( STDIN_FILENO, TCSANOW, &oldt);
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     return 0;
 }
+#elif _WIN32
+int scan_string(struct string* str) {
+    char c = 'a';
+
+    str->head = NULL;
+    str->tail = NULL;
+
+    flush_stdin();
+    while (1) {
+        c = getchar();
+        if (c == '\n') break;
+        tail_string_insert(str, c);
+    }
+
+    return 0;
+}
+#else
+
+#endif
 
 int print_string(struct string str) {
     struct c_node* index = str.head;

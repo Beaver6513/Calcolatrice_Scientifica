@@ -297,7 +297,7 @@ int load_tree_block(struct c_node* block_start, struct c_node* block_end, struct
                 }
             } else goto cycle2_end;
         }
-        cycle2_end:
+    cycle2_end:;
     }
     return 0;
 }

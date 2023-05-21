@@ -521,9 +521,9 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
     } else if(node->data->head->character == 'x' && index->character == '#') {
         index->character = '1';
     } else if(isdigit(node->data->head->character) && index->character == '@') {
-        index->character = node->data->tail->character;
-        struct c_node* t_index = node->data->tail->previous;
-        while(t_index != NULL) {
+        index->character = node->data->head->character;
+        struct c_node* t_index = node->data->tail;
+        while(t_index != node->data->head) {
             insert_after(out_string, index, t_index->character);
             t_index = t_index->previous;
         }
