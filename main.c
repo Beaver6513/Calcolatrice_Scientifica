@@ -21,7 +21,6 @@ void clear_screen() {
 
 int main() {
     int choice = 0;
-    int c = 0;
     struct memory mem;
     create_memory(&mem);
     
@@ -425,6 +424,10 @@ int main() {
                                 create_string(der_string);
 
                                 get_func_der(t_tree, der_string);
+                                der_string->head->previous = NULL;
+                                der_string->tail->next = NULL;
+                                zero_mult_delete(der_string);
+                                one_mult_delete(der_string);
 
                                 print_string(*der_string);
 

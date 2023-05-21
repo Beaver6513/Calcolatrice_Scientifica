@@ -274,3 +274,79 @@ int contract(struct string* str) {
 
     return 0;
 }
+
+int zero_mult_delete(struct string* string) {
+    struct c_node* index = string->head;
+    
+    while(1) {
+        do {
+            index = index->next;
+            if(index == NULL) goto cycle_exit;
+        } while(index->character != '*');
+
+        struct c_node* l_index = index;
+        struct c_node* r_index = index;
+
+        if(index->previous->character == '0') {
+            l_index = l_index->previous;
+            move_to_next_block(&r_index);
+            if(r_index->next->character == '+' || r_index->next->character == '-') {
+                r_index = r_index->next;
+            }
+            l_index->previous->next = r_index->next;
+            r_index->next->previous = l_index->previous;
+
+            do {
+                struct c_node* t = l_index;
+                l_index = l_index->next;
+                free(t);
+            } while(l_index != r_index);
+        } else if(index->previous->character == ']' && index->previous->previous->character == '0') {
+            l_index = index->previous->previous->previous;
+            move_to_next_block(&r_index);
+            if(r_index->next->character == '+' || r_index->next->character == '-') {
+                r_index = r_index->next;
+            }
+            l_index->previous->next = r_index->next;
+            r_index->next->previous = l_index->previous;
+
+            do {
+                struct c_node* t = l_index;
+                l_index = l_index->next;
+                free(t);
+            } while(l_index != r_index);
+        }
+        index = r_index;
+    }
+    cycle_exit:
+    return 0;
+}
+
+int one_mult_delete(struct string* string) {
+    struct c_node* index = string->head;
+    
+    while(1) {
+        do {
+            index = index->next;
+            if(index == NULL) goto cycle_exit;
+        } while(index->character != '*');
+
+        struct c_node* l_index = index;
+        struct c_node* r_index = index;
+
+        if(index->next->next->character == '1') {
+            r_index = index->next->next->next;
+            l_index->previous->next = r_index->next;
+            r_index->next->previous = l_index->previous;
+
+            do {
+                struct c_node* t = l_index;
+                l_index = l_index->next;
+                free(t);
+            } while(l_index != r_index);
+        }
+        index = r_index;
+    }
+    cycle_exit:
+    return 0;
+}

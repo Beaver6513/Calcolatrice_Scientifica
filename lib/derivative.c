@@ -67,17 +67,17 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             derive_node(node->r_child, out_string, rr_index);
         } else if(!is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
             insert_before(out_string, index, ']');
-            insert_after(out_string, index, '@');
             insert_before(out_string, index->previous, '@');
-            insert_after(out_string, index->next, '*');
             insert_before(out_string, index->previous->previous, '[');
-            insert_after(out_string, index->next->next->next, '[');
             insert_before(out_string, index->previous->previous->previous, '*');
-            insert_after(out_string, index->next->next->next->next, '#');
             insert_before(out_string, index->previous->previous->previous->previous, '#');
-            insert_after(out_string, index->next->next->next->next->next, ']');
             insert_before(out_string, index->previous->previous->previous->previous->previous, '[');
-            insert_after(out_string, index->next->next->next->next->next->next, ']');
+            insert_after(out_string, index, '@');
+            insert_after(out_string, index->next, '*');
+            insert_after(out_string, index->next->next, '[');
+            insert_after(out_string, index->next->next->next, '#');
+            insert_after(out_string, index->next->next->next->next, ']');
+            insert_after(out_string, index->next->next->next->next->next, ']');
 
             struct c_node* ll_index = index->previous->previous->previous->previous->previous;
             struct c_node* lr_index = index->previous->previous;
