@@ -31,7 +31,7 @@ run: $(BINARY)
 	@$(TARGETDIR)$(BINARY)
 
 debug: $(BINARY)
-	@$(DB) $(TARGETDIR)$(BINARY)
+	@$(DB) $(TARGETDIR)$(BINARY) -q
 
 val: $(BINARY)
 	valgrind $(VALFLAGS) $(TARGETDIR)$(BINARY)

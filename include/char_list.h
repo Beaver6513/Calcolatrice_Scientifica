@@ -5,11 +5,13 @@ struct c_node {
     struct c_node* next;
     struct c_node* previous;
 };
+typedef struct c_node c_node;
 
 struct string {
     struct c_node* head;
     struct c_node* tail;
 };
+typedef struct string string;
 
 int create_string(struct string* str);
 
