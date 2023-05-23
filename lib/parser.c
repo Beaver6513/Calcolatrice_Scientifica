@@ -275,6 +275,86 @@ int contract(struct string* str) {
     return 0;
 }
 
+int one_mult_delete(struct string* string) {
+    struct c_node* index = string->head;
+    
+    while(1) {
+        do {
+            index = index->next;
+            if(index == NULL) goto cycle_exit;
+        } while(index->character != '*');
+
+        struct c_node* l_index = index;
+        struct c_node* r_index = index;
+
+        if(index->next->next->character == '1') {
+            r_index = index->next->next->next;
+            l_index->previous->next = r_index->next;
+            r_index->next->previous = l_index->previous;
+
+            do {
+                struct c_node* t = l_index;
+                l_index = l_index->next;
+                free(t);
+            } while(l_index != r_index);
+        }
+        index = r_index;
+    }
+    cycle_exit:
+    return 0;
+}
+
+int par_check(struct string* string) {
+    struct c_node* l_index = string->head;
+    struct c_node* r_index = string->tail;
+
+    if(!is_leaf(l_index, r_index)) {
+        r_index = string->head;
+        while(l_index != NULL) {
+            while(l_index->character != '[') {
+                l_index = l_index->next;
+                if(l_index == NULL) goto cycle_exit;
+            }
+            r_index = l_index;
+            int count = 0;
+
+            do {
+                if(r_index->character == '(' || r_index->character == '[') {
+                    count++;
+                } else if(r_index->character == ')' || r_index->character == ']') {
+                    count--;
+                }
+                if(count != 0)
+                    r_index = r_index->next;
+            } while (count != 0);
+
+            cycle_start:
+
+            if(l_index->next->character == '[' && r_index->previous->character == ']') {
+                struct c_node* t_index = l_index;
+                count = 0;
+                move_to_next_block(&t_index);
+                t_index = t_index->next;
+
+                if(t_index == r_index && t_index->next != NULL) {
+                    struct c_node* c = l_index->next;
+                    l_index->next = l_index->next->next;
+                    l_index->next->next->previous = l_index;
+                    free(c);
+                    c = r_index->previous;
+                    r_index->previous = r_index->previous->previous;
+                    r_index->previous->previous->next = r_index;
+                    free(c);
+                    goto cycle_start;
+                }
+            }
+            l_index = l_index->next;
+        }
+    }
+    cycle_exit:
+    return 0;
+}
+
 int zero_mult_delete(struct string* string) {
     struct c_node* index = string->head;
     
@@ -320,33 +400,4 @@ int zero_mult_delete(struct string* string) {
     }
     cycle_exit:
     return 0;
-}
-
-int one_mult_delete(struct string* string) {
-    struct c_node* index = string->head;
-    
-    while(1) {
-        do {
-            index = index->next;
-            if(index == NULL) goto cycle_exit;
-        } while(index->character != '*');
-
-        struct c_node* l_index = index;
-        struct c_node* r_index = index;
-
-        if(index->next->next->character == '1') {
-            r_index = index->next->next->next;
-            l_index->previous->next = r_index->next;
-            r_index->next->previous = l_index->previous;
-
-            do {
-                struct c_node* t = l_index;
-                l_index = l_index->next;
-                free(t);
-            } while(l_index != r_index);
-        }
-        index = r_index;
-    }
-    cycle_exit:
-    return 0;
-}
+}                     

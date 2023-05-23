@@ -8,15 +8,16 @@
 
 #ifdef __linux__ 
 void clear_screen() {
-    system("clear");
+	system("clear");
 }
 #elif _WIN32
 void clear_screen() {
-    system("cls");
+	system("cls");
 }
 #else
 
 #endif
+
 
 
 int main() {
@@ -28,7 +29,6 @@ int main() {
         //Resets
         clear_screen();
         choice = 0;
-
         //MAIN CHOICE INPUT---------
         while(choice < 1 || choice > 7) {
             clear_screen();
@@ -426,8 +426,9 @@ int main() {
                                 get_func_der(t_tree, der_string);
                                 der_string->head->previous = NULL;
                                 der_string->tail->next = NULL;
-                                zero_mult_delete(der_string);
-                                one_mult_delete(der_string);
+                                par_check(der_string);
+                                //zero_mult_delete(der_string);
+                                //one_mult_delete(der_string);
 
                                 print_string(*der_string);
 

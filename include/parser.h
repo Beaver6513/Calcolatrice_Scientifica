@@ -31,3 +31,5 @@ int contract(struct string* str);
 int zero_mult_delete(struct string* string);
 
 int one_mult_delete(struct string* string);
+
+int par_check(struct string* string);
