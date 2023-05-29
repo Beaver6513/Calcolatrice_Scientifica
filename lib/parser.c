@@ -339,11 +339,11 @@ int par_check(struct string* string) {
                 if(t_index == r_index && t_index->next != NULL) {
                     struct c_node* c = l_index->next;
                     l_index->next = l_index->next->next;
-                    l_index->next->next->previous = l_index;
+                    l_index->next->previous = l_index;
                     free(c);
                     c = r_index->previous;
                     r_index->previous = r_index->previous->previous;
-                    r_index->previous->previous->next = r_index;
+                    r_index->previous->next = r_index;
                     free(c);
                     goto cycle_start;
                 }
@@ -355,46 +355,78 @@ int par_check(struct string* string) {
     return 0;
 }
 
-int zero_mult_delete(struct string* string) {
+int mult_delete(struct string* string) {
     struct c_node* index = string->head;
     
     while(1) {
         do {
             index = index->next;
             if(index == NULL) goto cycle_exit;
-        } while(index->character != '*');
+        } while(!is_operator(index->character));
 
         struct c_node* l_index = index;
         struct c_node* r_index = index;
 
-        if(index->previous->character == '0') {
-            l_index = l_index->previous;
-            move_to_next_block(&r_index);
-            if(r_index->next->character == '+' || r_index->next->character == '-') {
+        if(index->character == '*') {
+            if(index->previous->character == '0' && !isdigit(index->previous->previous->character)) {
+                l_index = l_index->previous;
+                if(r_index->next->character == '[') {
+                    move_to_next_block(&r_index);
+                } else {
+                    do {
+                        r_index = r_index->next;
+                    } while(!is_operator(r_index->character) && r_index->character != ']');
+                }
+                if(r_index->next->character == '+' || r_index->next->character == '-') {
+                    r_index = r_index->next;
+                }
+                delete_between(string, l_index, r_index);
+            } else if(index->previous->character == ']' && index->previous->previous->character == '0' && index->previous->previous->previous->character == '[') {
+                l_index = index->previous->previous->previous;
+                if(r_index->next->character == '[') {
+                    move_to_next_block(&r_index);
+                } else {
+                    do {
+                        r_index = r_index->next;
+                    } while(!is_operator(r_index->character) && r_index->character != ']');
+                }
+                if(r_index->next->character == '+' || r_index->next->character == '-') {
+                    r_index = r_index->next;
+                }
+                delete_between(string, l_index, r_index);
+            } else if(index->next->character == '1' && !isdigit(index->next->next->character)) {
                 r_index = r_index->next;
+                delete_between(string, l_index, r_index);
+            } else if(index->next->character == '[' && index->next->next->character == '1' && index->next->next->next->character == ']') {
+                r_index = index->next->next->next;
+                delete_between(string, l_index, r_index);
             }
-            l_index->previous->next = r_index->next;
-            r_index->next->previous = l_index->previous;
-
-            do {
-                struct c_node* t = l_index;
-                l_index = l_index->next;
-                free(t);
-            } while(l_index != r_index);
-        } else if(index->previous->character == ']' && index->previous->previous->character == '0') {
-            l_index = index->previous->previous->previous;
-            move_to_next_block(&r_index);
-            if(r_index->next->character == '+' || r_index->next->character == '-') {
+        } else if(index->character == '+' || index->character == '-') {
+            if(index->previous->character == '0') {
+                l_index = l_index->previous;
+                delete_between(string, l_index, r_index);
+            } else if(index->previous->character == ']' && index->previous->previous->character == '0' && index->previous->previous->previous->character == '[') {
+                l_index = index->previous->previous->previous;
+                delete_between(string, l_index, r_index);
+            } else if(index->next->character == '0') {
                 r_index = r_index->next;
+                delete_between(string, l_index, r_index);
+            } else if(index->next->character == '[' && index->next->next->character == '0' && index->next->next->next->character == ']') {
+                r_index = r_index->next->next->next;
+                delete_between(string, l_index, r_index);
+            } else if(index->previous->character == '1') {
+                l_index = l_index->previous;
+                delete_between(string, l_index, r_index);
+            } else if(index->previous->character == ']' && index->previous->previous->character == '1' && index->previous->previous->previous->character == '[') {
+                l_index = index->previous->previous->previous;
+                delete_between(string, l_index, r_index);
+            } else if(index->next->character == '1') {
+                r_index = r_index->next;
+                delete_between(string, l_index, r_index);
+            } else if(index->next->character == '[' && index->next->next->character == '1' && index->next->next->next->character == ']') {
+                r_index = r_index->next->next->next;
+                delete_between(string, l_index, r_index);
             }
-            l_index->previous->next = r_index->next;
-            r_index->next->previous = l_index->previous;
-
-            do {
-                struct c_node* t = l_index;
-                l_index = l_index->next;
-                free(t);
-            } while(l_index != r_index);
         }
         index = r_index;
     }

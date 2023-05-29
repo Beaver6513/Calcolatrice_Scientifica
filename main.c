@@ -406,6 +406,8 @@ int main() {
                                 create_string(t_string);
                                 struct tree* t_tree = (struct tree*)malloc(sizeof(struct tree));
                                 create_tree(t_tree);
+                                struct tree* out_tree = (struct tree*)malloc(sizeof(struct tree));
+                                create_tree(out_tree);
 
                                 inorder_i(index->data->tree_head, t_string);
                                 t_string->head->previous = NULL;
@@ -426,11 +428,25 @@ int main() {
                                 get_func_der(t_tree, der_string);
                                 der_string->head->previous = NULL;
                                 der_string->tail->next = NULL;
+                                mult_delete(der_string);
                                 par_check(der_string);
-                                //zero_mult_delete(der_string);
-                                //one_mult_delete(der_string);
 
+                                printf("Function derivative :  ");
                                 print_string(*der_string);
+                                printf("\n");
+
+                                der_string->head->previous = NULL;
+                                der_string->tail->next = NULL;
+                                modify(der_string, '[', '(');
+                                modify(der_string, ']', ')');
+                                delete(der_string, ' ');
+                                splice(der_string);
+                                group_string(der_string);
+                                load_tree(out_tree, der_string);
+                                int pos = add_tree(&mem, out_tree);
+                                
+
+                                printf("\nResult added in position: %d\nPress enter to return to main menu...", pos + 1);
 
                                 delete_string(der_string);
                                 delete_string(t_string);

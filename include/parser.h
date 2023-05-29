@@ -28,7 +28,7 @@ int load_tree(struct tree* out_tree, struct string* str);
 
 int contract(struct string* str);
 
-int zero_mult_delete(struct string* string);
+int mult_delete(struct string* string);
 
 int one_mult_delete(struct string* string);
 

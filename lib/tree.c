@@ -281,7 +281,7 @@ int load_tree_block(struct c_node* block_start, struct c_node* block_end, struct
         }
 
         if(index->character == '[') {
-            tail_string_insert(out_node->data, index->character);
+            tail_string_insert(out_node->data, '[');
         }
         do {
             index = index->next;

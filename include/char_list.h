@@ -38,3 +38,5 @@ int insert_before(struct string* str, struct c_node* index, char key);
 int insert_after(struct string* str, struct c_node* index, char key);
 
 int to_string(struct string* str, int n);
+
+int delete_between(struct string* string, struct c_node* block_start, struct c_node* block_end);

@@ -41,9 +41,9 @@ int tail_string_insert(struct string* str, char data) {
     n->next = NULL;
 
     n->character = data;
-    n->next = NULL;
 
     if(str->head == NULL) {
+        n->previous = NULL;
 	    str->head = n;
 	    str->tail = n;
     } else {
@@ -57,10 +57,9 @@ int tail_string_insert(struct string* str, char data) {
 
 int head_string_insert(struct string* str, char data) {
     struct c_node* n = (struct c_node*)malloc(sizeof(struct c_node));
-    n->next = NULL;
+    n->previous = NULL;
 
     n->character = data;
-    n->previous = NULL;
 
     if(str->head == NULL) {
         n->next = NULL;
@@ -285,5 +284,44 @@ int to_string(struct string* str, int n) {
         char c = digit + '0';
         head_string_insert(str, c);
     }
+    return 0;
+}
+
+int delete_between(struct string* string, struct c_node* block_start, struct c_node* block_end) {
+    if(block_start->previous == NULL && block_end->next != NULL) {
+        string->head = block_end->next;
+        string->head->previous = NULL;
+        do {
+            struct c_node* t = block_start;
+            block_start = block_start->next;
+            free(t);
+        } while(block_start != block_end);
+    } else if(block_start->previous != NULL && block_end->next == NULL) {
+        string->tail = block_start->previous;
+        string->tail->next = NULL;
+        do {
+            struct c_node* t = block_start;
+            block_start = block_start->next;
+            free(t);
+        } while(block_start != block_end);
+    } else if(block_start->previous != NULL && block_end->next != NULL) {
+        block_start->previous->next = block_end->next;
+        block_end->next->previous = block_start->previous;
+        do {
+            struct c_node* t = block_start;
+            block_start = block_start->next;
+            free(t);
+        } while(block_start != block_end);
+    } else if(block_start->previous == NULL && block_end->next == NULL) {
+        do {
+            struct c_node* t = block_start;
+            block_start = block_start->next;
+            free(t);
+        } while(block_start != block_end);
+        string->head = NULL;
+        string->tail = NULL;
+        head_string_insert(string, '0');
+    }
+
     return 0;
 }
