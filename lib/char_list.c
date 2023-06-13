@@ -165,6 +165,10 @@ int modify(struct string* str, char key, char target) {
 }
 
 int delete_string(struct string* str) {
+    if(str->head == NULL && str->tail == NULL) {
+        free(str);
+        return 0;
+    }
     struct c_node* i = str->head;
     do {
         i = str->head;

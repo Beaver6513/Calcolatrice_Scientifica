@@ -316,6 +316,10 @@ int print_tree(struct tree* out_tree) {
 }
 
 int remove_tree(struct tree* tree) {
+    if(tree == NULL) {
+        free(tree);
+        return 0;
+    }
     postorder_r(tree->tree_head);
     free(tree);
     return 0;

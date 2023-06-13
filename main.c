@@ -3,6 +3,7 @@
 #include "parser.h"
 #include "tree.h"
 #include "derivative.h"
+#include "files.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -24,6 +25,7 @@ int main() {
     int choice = 0;
     struct memory mem;
     create_memory(&mem);
+    load_mem(&mem);
     
     while(1) {
         //Resets
@@ -73,6 +75,7 @@ int main() {
             }
             break;
             case 2:
+            {
                 choice = 0;
                 while(choice < 1 || choice > 3) {
                     clear_screen();
@@ -185,7 +188,9 @@ int main() {
                     default:
                         exit(1);
                 }
-                flush_stdin();
+                int c;
+                while ((c = getchar()) != '\n' && c != EOF);
+            }
             break;
             case 3:
                 choice = 0;
@@ -418,6 +423,7 @@ int main() {
                                 expand_string(t_string);
                                 splice(t_string);
                                 group_string(t_string);
+                                par_check(t_string);
                                 load_tree(t_tree, t_string);
                                 delete_from_tree(t_tree, '[');
                                 delete_from_tree(t_tree, ']');
@@ -428,7 +434,7 @@ int main() {
                                 get_func_der(t_tree, der_string);
                                 der_string->head->previous = NULL;
                                 der_string->tail->next = NULL;
-                                mult_delete(der_string);
+                                while(mult_delete(der_string));
                                 par_check(der_string);
 
                                 printf("Function derivative :  ");
@@ -467,7 +473,6 @@ int main() {
                                 s_params->tail->next = NULL;
 
                                 struct memory_node* mem_index = mem.head;
-                                int is_equal = 0;
                                 int func_found = 0;
                                 int func_index = 1;
                                 while (mem_index != NULL) {
@@ -478,8 +483,7 @@ int main() {
                                     modify(t_list, ')', ']');
                                     contract(t_list);
 
-                                    is_equal = compare(s_params, t_list);
-                                    if (is_equal == 1) {
+                                    if (compare(s_params, t_list)) {
                                         func_found++;
                                         printf("Index: %d\nFunction :   ", func_index);
                                         print_string(*t_list);
@@ -495,7 +499,6 @@ int main() {
                                     printf("No function found!");
                                 }
                                 delete_string(s_params);
-
 
                                 choice = -1;
                                 mem_lenght = 1;
@@ -517,10 +520,58 @@ int main() {
                                     index = index->next;
                                 }
 
-                                printf("Insert x value: ");
+                                struct string* t_string = (struct string*)malloc(sizeof(struct string));
+                                create_string(t_string);
+                                struct tree* t_tree = (struct tree*)malloc(sizeof(struct tree));
+                                create_tree(t_tree);
+                                struct tree* out_tree = (struct tree*)malloc(sizeof(struct tree));
+                                create_tree(out_tree);
 
+                                inorder_i(index->data->tree_head, t_string);
+                                t_string->head->previous = NULL;
+                                t_string->tail->next = NULL;
+                                modify(t_string, '[', '(');
+                                modify(t_string, ']', ')');
+                                delete(t_string, ' ');
+                                expand_string(t_string);
+                                splice(t_string);
+                                group_string(t_string);
+                                par_check(t_string);
+                                load_tree(t_tree, t_string);
+                                delete_from_tree(t_tree, '[');
+                                delete_from_tree(t_tree, ']');
 
+                                struct string* der_string = (struct string*)malloc(sizeof(struct string));
+                                create_string(der_string);
+
+                                get_func_der(t_tree, der_string);
+                                der_string->head->previous = NULL;
+                                der_string->tail->next = NULL;
+                                while(mult_delete(der_string));
+                                par_check(der_string);
+
+                                printf("Function derivative :  ");
+                                print_string(*der_string);
+                                printf("\n");
+
+                                der_string->head->previous = NULL;
+                                der_string->tail->next = NULL;
+                                modify(der_string, '[', '(');
+                                modify(der_string, ']', ')');
+                                delete(der_string, ' ');
+                                splice(der_string);
+                                group_string(der_string);
+                                load_tree(out_tree, der_string);
+                                int pos = add_tree(&mem, out_tree);
+                                
+
+                                printf("\nResult added in position: %d\nPress enter to return to main menu...", pos + 1);
+
+                                delete_string(der_string);
+                                delete_string(t_string);
+                                remove_tree(t_tree);
                                 flush_stdin();
+                                getchar();
                             }
                             break;
                             case 3:
@@ -706,6 +757,7 @@ int main() {
             break;
             case 7:
                 clear_screen();
+                save_mem(mem);
                 free_memory(&mem);
                 exit(0);
             break;
@@ -713,6 +765,7 @@ int main() {
                 exit(1);
         }
     }
+    
     
     return 0; 
 }

@@ -336,7 +336,7 @@ int par_check(struct string* string) {
                 move_to_next_block(&t_index);
                 t_index = t_index->next;
 
-                if(t_index == r_index && t_index->next != NULL) {
+                if(t_index == r_index) {
                     struct c_node* c = l_index->next;
                     l_index->next = l_index->next->next;
                     l_index->next->previous = l_index;
@@ -356,6 +356,7 @@ int par_check(struct string* string) {
 }
 
 int mult_delete(struct string* string) {
+    bool changed = false;
     struct c_node* index = string->head;
     
     while(1) {
@@ -376,11 +377,13 @@ int mult_delete(struct string* string) {
                     do {
                         r_index = r_index->next;
                     } while(!is_operator(r_index->character) && r_index->character != ']');
+                    r_index = r_index->previous;
                 }
                 if(r_index->next->character == '+' || r_index->next->character == '-') {
                     r_index = r_index->next;
                 }
                 delete_between(string, l_index, r_index);
+                changed = true;
             } else if(index->previous->character == ']' && index->previous->previous->character == '0' && index->previous->previous->previous->character == '[') {
                 l_index = index->previous->previous->previous;
                 if(r_index->next->character == '[') {
@@ -389,47 +392,82 @@ int mult_delete(struct string* string) {
                     do {
                         r_index = r_index->next;
                     } while(!is_operator(r_index->character) && r_index->character != ']');
+                    r_index = r_index->previous;
                 }
                 if(r_index->next->character == '+' || r_index->next->character == '-') {
                     r_index = r_index->next;
                 }
                 delete_between(string, l_index, r_index);
-            } else if(index->next->character == '1' && !isdigit(index->next->next->character)) {
+                changed = true;
+            } else if(index->next->character == '[' && index->next->next->character == '0' && index->next->next->next->character == ']') {
+                r_index = index->next->next->next;
+                if(l_index->previous->character == ']') {
+                    move_to_previous_block(&l_index);
+                } else {
+                    do {
+                        l_index = l_index->previous;
+                    } while(!is_operator(l_index->character) && l_index->character != '[');
+                    l_index = l_index->next;
+                }
+                if(l_index->previous->character == '+' || l_index->previous->character == '-') {
+                    l_index = l_index->previous;
+                }
+                delete_between(string, l_index, r_index);
+                changed = true;
+            } else if(index->next->character == '0' && !isdigit(index->next->next->character)) {
+                r_index = index->next;
+                if(l_index->previous->character == ']') {
+                    move_to_previous_block(&l_index);
+                } else {
+                    do {
+                        l_index = l_index->previous;
+                    } while(!is_operator(l_index->character) && l_index->character != '[');
+                    l_index = l_index->next;
+                }
+                if(l_index->previous->character == '+' || l_index->previous->character == '-') {
+                    l_index = l_index->previous;
+                }
+                delete_between(string, l_index, r_index);
+                changed = true;
+            }
+            if(l_index->previous->character == '[' && r_index->next->character == ']') {
+                l_index = l_index->previous;
                 r_index = r_index->next;
                 delete_between(string, l_index, r_index);
-            } else if(index->next->character == '[' && index->next->next->character == '1' && index->next->next->next->character == ']') {
-                r_index = index->next->next->next;
-                delete_between(string, l_index, r_index);
+                if(string->head == string->tail) {
+                    string->head->character = '0';
+                } else {
+                    insert_before(string, r_index->next, '0');
+                }
             }
         } else if(index->character == '+' || index->character == '-') {
             if(index->previous->character == '0') {
                 l_index = l_index->previous;
                 delete_between(string, l_index, r_index);
+                changed = true;
             } else if(index->previous->character == ']' && index->previous->previous->character == '0' && index->previous->previous->previous->character == '[') {
                 l_index = index->previous->previous->previous;
                 delete_between(string, l_index, r_index);
+                changed = true;
             } else if(index->next->character == '0') {
                 r_index = r_index->next;
                 delete_between(string, l_index, r_index);
+                changed = true;
             } else if(index->next->character == '[' && index->next->next->character == '0' && index->next->next->next->character == ']') {
                 r_index = r_index->next->next->next;
                 delete_between(string, l_index, r_index);
-            } else if(index->previous->character == '1') {
-                l_index = l_index->previous;
+                changed = true;
+            }
+        } else if(index->character == '^') {
+            if(index->next->character == '1' && !isdigit(index->next->next->character)) {
+                r_index = index->next;
+                l_index = index;
                 delete_between(string, l_index, r_index);
-            } else if(index->previous->character == ']' && index->previous->previous->character == '1' && index->previous->previous->previous->character == '[') {
-                l_index = index->previous->previous->previous;
-                delete_between(string, l_index, r_index);
-            } else if(index->next->character == '1') {
-                r_index = r_index->next;
-                delete_between(string, l_index, r_index);
-            } else if(index->next->character == '[' && index->next->next->character == '1' && index->next->next->next->character == ']') {
-                r_index = r_index->next->next->next;
-                delete_between(string, l_index, r_index);
+                changed = true;
             }
         }
         index = r_index;
     }
     cycle_exit:
-    return 0;
-}                     
+    return changed;
+}                    
