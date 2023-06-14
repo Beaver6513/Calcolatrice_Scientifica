@@ -434,8 +434,10 @@ int main() {
                                 get_func_der(t_tree, der_string);
                                 der_string->head->previous = NULL;
                                 der_string->tail->next = NULL;
-                                while(mult_delete(der_string));
+
+                                while(mult_delete(der_string, der_string->head));
                                 par_check(der_string);
+                                modify(der_string, '-', '_');
 
                                 printf("Function derivative :  ");
                                 print_string(*der_string);
@@ -547,8 +549,10 @@ int main() {
                                 get_func_der(t_tree, der_string);
                                 der_string->head->previous = NULL;
                                 der_string->tail->next = NULL;
-                                while(mult_delete(der_string));
+                                
+                                while(mult_delete(der_string, der_string->head));
                                 par_check(der_string);
+                                modify(der_string, '-', '_');
 
                                 printf("Function derivative :  ");
                                 print_string(*der_string);

@@ -20,6 +20,29 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
         index = out_string->head;
     }
 
+    if(node->data->head->character == '_') {
+        if(node->data->head->next->character == 'x' && index->character == '#') {
+            index->character = '1';
+            insert_before(out_string, index, '_');
+            insert_before(out_string, index->previous, '[');
+            insert_after(out_string, index, ']');
+        } else if(node->data->head->next->character == 'x' && index->character == '@') {
+            index->character = 'x';
+            insert_before(out_string, index, '_');
+            insert_before(out_string, index->previous, '[');
+            insert_after(out_string, index, ']');
+        } else if(isdigit(node->data->head->next->character) && index->character == '#') {
+            index->character = '0';
+        } else if(isdigit(node->data->head->next->character) && index->character == '@') {
+            index->character = '_';
+            insert_before(out_string, index, '[');
+            struct c_node* t_index = node->data->tail;
+            while(t_index != '_') {
+                insert_after(out_string, index, t_index->character);
+                t_index = t_index->previous;
+            }
+        }
+    }
     if(node->data->head->character == '*' && index->character == '#') {
         index->character = '+';
 

@@ -28,8 +28,10 @@ int load_tree(struct tree* out_tree, struct string* str);
 
 int contract(struct string* str);
 
-int mult_delete(struct string* string);
+int mult_delete(struct string* string, struct c_node* index);
 
 int one_mult_delete(struct string* string);
 
 int par_check(struct string* string);
+
+int check_limits(struct c_node* tl_index, struct c_node* tr_index, struct string* string);

@@ -355,11 +355,12 @@ int par_check(struct string* string) {
     return 0;
 }
 
-int mult_delete(struct string* string) {
-    bool changed = false;
-    struct c_node* index = string->head;
-    
-    while(1) {
+int mult_delete(struct string* string, struct c_node* index) {
+    while(true) {
+        struct c_node* tl_index = NULL;
+        struct c_node* tr_index = NULL;
+        
+        if(index == NULL) goto cycle_exit;
         do {
             index = index->next;
             if(index == NULL) goto cycle_exit;
@@ -382,8 +383,13 @@ int mult_delete(struct string* string) {
                 if(r_index->next->character == '+' || r_index->next->character == '-') {
                     r_index = r_index->next;
                 }
+                struct c_node* tl_index = l_index->previous;
+                struct c_node* tr_index = r_index->next;
                 delete_between(string, l_index, r_index);
-                changed = true;
+                index = tr_index;
+                check_limits(tl_index, tr_index, string);
+                mult_delete(string, tr_index);
+                return true;
             } else if(index->previous->character == ']' && index->previous->previous->character == '0' && index->previous->previous->previous->character == '[') {
                 l_index = index->previous->previous->previous;
                 if(r_index->next->character == '[') {
@@ -397,8 +403,13 @@ int mult_delete(struct string* string) {
                 if(r_index->next->character == '+' || r_index->next->character == '-') {
                     r_index = r_index->next;
                 }
+                struct c_node* tl_index = l_index->previous;
+                struct c_node* tr_index = r_index->next;
                 delete_between(string, l_index, r_index);
-                changed = true;
+                index = tr_index;
+                check_limits(tl_index, tr_index, string);
+                mult_delete(string, tr_index);
+                return true;
             } else if(index->next->character == '[' && index->next->next->character == '0' && index->next->next->next->character == ']') {
                 r_index = index->next->next->next;
                 if(l_index->previous->character == ']') {
@@ -412,8 +423,13 @@ int mult_delete(struct string* string) {
                 if(l_index->previous->character == '+' || l_index->previous->character == '-') {
                     l_index = l_index->previous;
                 }
+                struct c_node* tl_index = l_index->previous;
+                struct c_node* tr_index = r_index->next;
                 delete_between(string, l_index, r_index);
-                changed = true;
+                index = tr_index;
+                check_limits(tl_index, tr_index, string);
+                mult_delete(string, tr_index);
+                return true;
             } else if(index->next->character == '0' && !isdigit(index->next->next->character)) {
                 r_index = index->next;
                 if(l_index->previous->character == ']') {
@@ -427,47 +443,66 @@ int mult_delete(struct string* string) {
                 if(l_index->previous->character == '+' || l_index->previous->character == '-') {
                     l_index = l_index->previous;
                 }
+                struct c_node* tl_index = l_index->previous;
+                struct c_node* tr_index = r_index->next;
                 delete_between(string, l_index, r_index);
-                changed = true;
-            }
-            if(l_index->previous->character == '[' && r_index->next->character == ']') {
-                l_index = l_index->previous;
-                r_index = r_index->next;
-                delete_between(string, l_index, r_index);
-                if(string->head == string->tail) {
-                    string->head->character = '0';
-                } else {
-                    insert_before(string, r_index->next, '0');
-                }
+                index = tr_index;
+                check_limits(tl_index, tr_index, string);
+                mult_delete(string, tr_index);
+                return true;
             }
         } else if(index->character == '+' || index->character == '-') {
             if(index->previous->character == '0') {
                 l_index = l_index->previous;
+                struct c_node* tr_index = r_index->next;
                 delete_between(string, l_index, r_index);
-                changed = true;
+                index = tr_index;
+                return true;
             } else if(index->previous->character == ']' && index->previous->previous->character == '0' && index->previous->previous->previous->character == '[') {
                 l_index = index->previous->previous->previous;
+                struct c_node* tr_index = r_index->next;
                 delete_between(string, l_index, r_index);
-                changed = true;
+                index = tr_index;
+                return true;
             } else if(index->next->character == '0') {
                 r_index = r_index->next;
+                struct c_node* tr_index = r_index->next;
                 delete_between(string, l_index, r_index);
-                changed = true;
+                index = tr_index;
+                return true;
             } else if(index->next->character == '[' && index->next->next->character == '0' && index->next->next->next->character == ']') {
                 r_index = r_index->next->next->next;
+                struct c_node* tr_index = r_index->next;
                 delete_between(string, l_index, r_index);
-                changed = true;
+                index = tr_index;
+                return true;
             }
         } else if(index->character == '^') {
             if(index->next->character == '1' && !isdigit(index->next->next->character)) {
                 r_index = index->next;
                 l_index = index;
+                struct c_node* tr_index = r_index->next;
                 delete_between(string, l_index, r_index);
-                changed = true;
+                index = tr_index;
+                return true;
             }
         }
-        index = r_index;
     }
     cycle_exit:
-    return changed;
+    return false;
 }                    
+
+int check_limits(struct c_node* tl_index, struct c_node* tr_index, struct string* string) {
+    if(tl_index != NULL && tr_index != NULL) {
+        if(tl_index->character == '[' && tr_index->character == ']') {
+            struct c_node* t_index = tr_index->next;
+            delete_between(string, tl_index, tr_index);
+            if(string->head == string->tail) {
+                string->head->character = '0';
+            } else {
+                insert_before(string, t_index, '0');
+            }
+        }
+    }
+    return 0;
+}

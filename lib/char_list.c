@@ -300,6 +300,7 @@ int delete_between(struct string* string, struct c_node* block_start, struct c_n
             block_start = block_start->next;
             free(t);
         } while(block_start != block_end);
+        free(block_start);
     } else if(block_start->previous != NULL && block_end->next == NULL) {
         string->tail = block_start->previous;
         string->tail->next = NULL;
@@ -308,6 +309,7 @@ int delete_between(struct string* string, struct c_node* block_start, struct c_n
             block_start = block_start->next;
             free(t);
         } while(block_start != block_end);
+        free(block_start);
     } else if(block_start->previous != NULL && block_end->next != NULL) {
         block_start->previous->next = block_end->next;
         block_end->next->previous = block_start->previous;
@@ -316,12 +318,14 @@ int delete_between(struct string* string, struct c_node* block_start, struct c_n
             block_start = block_start->next;
             free(t);
         } while(block_start != block_end);
+        free(block_start);
     } else if(block_start->previous == NULL && block_end->next == NULL) {
         do {
             struct c_node* t = block_start;
             block_start = block_start->next;
             free(t);
         } while(block_start != block_end);
+        free(block_start);
         string->head = NULL;
         string->tail = NULL;
         head_string_insert(string, '0');

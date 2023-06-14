@@ -69,6 +69,7 @@ int load_mem(struct memory* mem) {
             } else if(c == EOF) {
                 delete_string(str);
                 remove_tree(function);
+                fclose(file);
                 return 0;
             }
                 
