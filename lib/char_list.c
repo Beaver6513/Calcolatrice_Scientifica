@@ -279,6 +279,24 @@ int insert_after(struct string* str, struct c_node* index, char key) {
     return 0;
 }
 
+int insert_before_l(struct string* str, struct c_node* index, struct string* string) {
+    struct c_node* i = string->head;
+    while(index != NULL) {
+        insert_before(str, index, i->character);
+        i = i->next;
+    }
+    return 0;
+}
+
+int insert_after_l(struct string* str, struct c_node* index, struct string* string) {
+    struct c_node* i = string->tail;
+    while(index != NULL) {
+        insert_after(str, index, i->character);
+        i = i->previous;
+    }
+    return 0;
+}
+
 int to_string(struct string* str, int n) {
     int digits = log10(n) + 1;
 

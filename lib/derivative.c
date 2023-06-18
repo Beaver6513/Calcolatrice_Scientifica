@@ -348,7 +348,7 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
         insert_before(out_string, t_index, '[');
         insert_before(out_string, t_index->previous, '[');
 
-        struct string* new_exponent_str = (struct string*)malloc(sizeof(struct string*));
+        struct string* new_exponent_str = (struct string*)malloc(sizeof(struct string));
         create_string(new_exponent_str);
         int exponent = get_number(node->r_child->data);
         exponent--;

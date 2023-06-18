@@ -24,8 +24,6 @@ int group(struct c_node* block_start, struct c_node* block_end, struct string* s
 
 int group_string(struct string* str);
 
-int load_tree(struct tree* out_tree, struct string* str);
-
 int contract(struct string* str);
 
 int mult_delete(struct string* string, struct c_node* index);
