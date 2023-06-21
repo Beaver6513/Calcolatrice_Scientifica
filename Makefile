@@ -19,10 +19,10 @@ DEPFILES = $(patsubst %.c, %.d, $(CFILES))
 all: $(BINARY)
 
 $(BINARY): $(OBJFILES)
-	$(CC) -o $(TARGETDIR)$@ $^ $(LIBS)
+	@$(CC) -o $(TARGETDIR)$@ $^ $(LIBS)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
 	@rm -r $(TARGETDIR)$(BINARY) $(OBJFILES) $(DEPFILES)
@@ -34,6 +34,6 @@ debug: $(BINARY)
 	@$(DB) $(TARGETDIR)$(BINARY) -q
 
 val: $(BINARY)
-	valgrind $(VALFLAGS) $(TARGETDIR)$(BINARY)
+	@valgrind $(VALFLAGS) $(TARGETDIR)$(BINARY)
 
 -include $(DEPFILES)
