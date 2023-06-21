@@ -11,12 +11,12 @@ bool file_exists(const char *filename) {
     return access(filename, F_OK) == 0;
 }
 
-int save_mem(struct memory mem) {
+int save_mem(memory mem) {
     FILE* file = fopen("functions.txt", "w");
-    struct memory_node* mem_index = mem.head;
+    memory_node* mem_index = mem.head;
 
     while(mem_index != NULL) {
-        struct string* string = (struct string*)malloc(sizeof(struct string));
+        string* string = (string*)malloc(sizeof(string));
         create_string(string);
 
         inorder_i(mem_index->data->tree_head, string);
@@ -26,7 +26,7 @@ int save_mem(struct memory mem) {
         modify(string, ']', ')');
         delete(string, ' ');
 
-        struct c_node* list_index = string->head;
+        c_node* list_index = string->head;
         while(list_index != NULL) {
             putc(list_index->character, file);
             list_index = list_index->next;
@@ -41,7 +41,7 @@ int save_mem(struct memory mem) {
     return 0;
 }
 
-int load_mem(struct memory* mem) {
+int load_mem(memory* mem) {
     if(!file_exists("functions.txt")) {
         return 0;
     }
@@ -56,8 +56,8 @@ int load_mem(struct memory* mem) {
     ungetc(c, file);
 
     while (c != '\n' || c != EOF) {
-        struct tree* function = (struct tree*)malloc(sizeof(struct tree));
-        struct string* str = (struct string*)malloc(sizeof(struct string));
+        tree* function = (tree*)malloc(sizeof(tree));
+        string* str = (string*)malloc(sizeof(string));
 
         create_string(str);
         create_tree(function);

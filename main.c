@@ -2,6 +2,7 @@
 #include "memory.h"
 #include "parser.h"
 #include "tree.h"
+#include "tree_utils.h"
 #include "derivative.h"
 #include "files.h"
 #include <stdio.h>
@@ -23,7 +24,7 @@ void clear_screen() {
 
 int main() {
     int choice = 0;
-    struct memory mem;
+    memory mem;
     create_memory(&mem);
     load_mem(&mem);
     
@@ -50,7 +51,7 @@ int main() {
         switch(choice) {
             case 1:
             {
-                struct tree* function = (struct tree*)malloc(sizeof(struct tree));
+                tree* function = (tree*)malloc(sizeof(tree));
                 struct string* str = (struct string*)malloc(sizeof(struct string));
 
                 create_string(str);
@@ -89,11 +90,8 @@ int main() {
                     case 1:
                         choice = -1;
                         int mem_lenght = 1;
-                        struct memory_node* index = mem.head;
-                        while(index != mem.tail) {
-                            mem_lenght++;
-                            index = index->next;
-                        }
+                        memory_node* index = mem.head;
+                        get_length(index, mem, &mem_lenght);
                         while(choice < 1 || choice > mem_lenght) {
                             clear_screen();
 
@@ -121,7 +119,7 @@ int main() {
                         printf("\n\n");
                         fix(s_params);
 
-                        struct memory_node* mem_index = mem.head;
+                        memory_node* mem_index = mem.head;
                         int is_equal = 0;
                         int func_found = 0;
                         int func_index = 1;
@@ -142,7 +140,7 @@ int main() {
                                 printf("\n");
                             }
 
-                            mem_index = mem_index->next;
+                            to_next(mem_index);
                             func_index++;
                             delete_string(t_list);
                         }
@@ -156,10 +154,7 @@ int main() {
                         choice = -1;
                         mem_lenght = 1;
                         index = mem.head;
-                        while (index != mem.tail) {
-                            mem_lenght++;
-                            index = index->next;
-                        }
+                        get_length(index, mem, &mem_lenght);
                         while (choice < 1 || choice > mem_lenght) {
 
                             if ((choice < 0 || choice > mem_lenght) && choice != -1) {
@@ -169,9 +164,7 @@ int main() {
                             scanf("%d", &choice);
                         }
                         index = mem.head;
-                        for (int i = 0; i < (choice - 1); i++) {
-                            index = index->next;
-                        }
+                        move_index(index, choice);
 
                         remove_mem_node(&mem, index);
                         printf("\nFunction deleted!\nPress enter to return to main menu...");
@@ -211,7 +204,7 @@ int main() {
                         printf("\n\n");
                         fix(s_params);
 
-                        struct memory_node* mem_index = mem.head;
+                        memory_node* mem_index = mem.head;
                         int is_equal = 0;
                         int func_found = 0;
                         int func_index = 1;
@@ -232,7 +225,7 @@ int main() {
                                 printf("\n");
                             }
 
-                            mem_index = mem_index->next;
+                            to_next(mem_index);
                             func_index++;
                             delete_string(t_list);
                         }
@@ -256,11 +249,8 @@ int main() {
             case 4:
                 choice = -1;
                 int mem_lenght = 1;
-                struct memory_node* index = mem.head;
-                while(index != mem.tail) {
-                    mem_lenght++;
-                    index = index->next;
-                }
+                memory_node* index = mem.head;
+                get_length(index, mem, &mem_lenght);
                 while(choice < 1 || choice > mem_lenght) {
                     clear_screen();
 
@@ -271,15 +261,13 @@ int main() {
                     scanf("%d", &choice);
                 }
                 index = mem.head;
-                for (int i = 0; i < (choice - 1) ; i++) {
-                    index = index->next;
-                }
+                move_index(index, choice);
 
-                struct tree* function_2 = (struct tree*)malloc(sizeof(struct tree));
+                tree* function_2 = (tree*)malloc(sizeof(tree));
                 create_tree(function_2);
                 struct string* t_list = (struct string*)malloc(sizeof(struct string));
                 create_string(t_list);
-                inorder_i(index->data->tree_head, t_list);
+                inorder_i(get_parent(index), t_list);
                 fix(t_list);
                 splice(t_list);
                 group_string(t_list);
@@ -307,11 +295,8 @@ int main() {
                     case 1:
                         choice = -1;
                         int mem_lenght = 1;
-                        struct memory_node* index = mem.head;
-                        while(index != mem.tail) {
-                            mem_lenght++;
-                            index = index->next;
-                        }
+                        memory_node* index = mem.head;
+                        get_length(index, mem, &mem_lenght);
                         while(choice < 1 || choice > mem_lenght) {
                             clear_screen();
 
@@ -323,11 +308,9 @@ int main() {
                         }
                         printf("\n");
                         index = mem.head;
-                        for(int i = 1 ; i < choice ; i++) {
-                            index = index->next;
-                        }
+                        move_index(index, choice + 1);
                         printf("Function :   ");
-                        print_tree(index->data);
+                        print_tree(index);
                         flush_stdin();
                         printf("\nPress enter to return to main menu...");
                     break;
@@ -338,9 +321,9 @@ int main() {
                         while(index != NULL) {
                             printf("Index : %d\n", count);
                             printf("Function :   ");
-                            print_tree(index->data);
+                            print_tree(index);
                             printf("\n");
-                            index = index->next;
+                            to_next(index);
                             count++;
                         }
                         flush_stdin();
@@ -382,11 +365,8 @@ int main() {
                             case 1:
                                 choice = -1;
                                 int mem_lenght = 1;
-                                struct memory_node* index = mem.head;
-                                while(index != mem.tail) {
-                                    mem_lenght++;
-                                    index = index->next;
-                                }
+                                memory_node* index = mem.head;
+                                get_length(index, mem, &mem_lenght);
                                 while(choice < 1 || choice > mem_lenght) {
                                     clear_screen();
 
@@ -397,18 +377,16 @@ int main() {
                                     scanf("%d", &choice);
                                 }
                                 index = mem.head;
-                                for (int i = 0; i < (choice - 1) ; i++) {
-                                    index = index->next;
-                                }
+                                move_index(index, choice);
 
                                 struct string* t_string = (struct string*)malloc(sizeof(struct string));
                                 create_string(t_string);
-                                struct tree* t_tree = (struct tree*)malloc(sizeof(struct tree));
+                                tree* t_tree = (tree*)malloc(sizeof(tree));
                                 create_tree(t_tree);
-                                struct tree* out_tree = (struct tree*)malloc(sizeof(struct tree));
+                                tree* out_tree = (tree*)malloc(sizeof(tree));
                                 create_tree(out_tree);
 
-                                inorder_i(index->data->tree_head, t_string);
+                                inorder_i(get_parent(index), t_string);
                                 fix(t_string);
                                 modify(t_string, '[', '(');
                                 modify(t_string, ']', ')');
@@ -427,7 +405,7 @@ int main() {
                                 get_func_der(t_tree, der_string);
                                 fix(der_string);
 
-                                while(mult_delete(der_string, der_string->head));
+                                while(mult_delete(der_string));
                                 par_check(der_string);
                                 modify(der_string, '-', '_');
 
@@ -464,7 +442,7 @@ int main() {
                                 printf("\n\n");
                                 fix(s_params);
 
-                                struct memory_node* mem_index = mem.head;
+                                memory_node* mem_index = mem.head;
                                 int func_found = 0;
                                 int func_index = 1;
                                 while (mem_index != NULL) {
@@ -482,7 +460,7 @@ int main() {
                                         printf("\n");
                                     }
 
-                                    mem_index = mem_index->next;
+                                    to_next(mem_index);
                                     func_index++;
                                     delete_string(t_list);
                                 }
@@ -495,10 +473,7 @@ int main() {
                                 choice = -1;
                                 mem_lenght = 1;
                                 index = mem.head;
-                                while (index != mem.tail) {
-                                    mem_lenght++;
-                                    index = index->next;
-                                }
+                                get_length(index, mem, &mem_lenght);
                                 while (choice < 1 || choice > mem_lenght) {
 
                                     if ((choice < 0 || choice > mem_lenght) && choice != -1) {
@@ -512,9 +487,9 @@ int main() {
 
                                 struct string* t_string = (struct string*)malloc(sizeof(struct string));
                                 create_string(t_string);
-                                struct tree* t_tree = (struct tree*)malloc(sizeof(struct tree));
+                                tree* t_tree = (tree*)malloc(sizeof(tree));
                                 create_tree(t_tree);
-                                struct tree* out_tree = (struct tree*)malloc(sizeof(struct tree));
+                                tree* out_tree = (tree*)malloc(sizeof(tree));
                                 create_tree(out_tree);
 
                                 inorder_i(get_parent(index), t_string);
@@ -536,7 +511,7 @@ int main() {
                                 get_func_der(t_tree, der_string);
                                 fix(der_string);
                                 
-                                while(mult_delete(der_string, der_string->head));
+                                while(mult_delete(der_string));
                                 par_check(der_string);
                                 modify(der_string, '-', '_');
 
@@ -585,11 +560,8 @@ int main() {
                             case 1:
                                 choice = -1;
                                 int mem_lenght = 1;
-                                struct memory_node* index = mem.head;
-                                while(index != mem.tail) {
-                                    mem_lenght++;
-                                    index = index->next;
-                                }
+                                memory_node* index = mem.head;
+                                get_length(index, mem, &mem_lenght);
                                 while(choice < 1 || choice > mem_lenght) {
                                     clear_screen();
 
@@ -600,16 +572,14 @@ int main() {
                                     scanf("%d", &choice);
                                 }
                                 index = mem.head;
-                                for (int i = 0; i < (choice - 1) ; i++) {
-                                    index = index->next;
-                                }
+                                move_index(index, choice);
                                 printf("Insert x value: ");
 
                                 struct string* x = (struct string*)malloc(sizeof(struct string));
                                 create_string(x);
                                 struct string* t_string = (struct string*)malloc(sizeof(struct string));
                                 create_string(t_string);
-                                struct tree* t_tree = (struct tree*)malloc(sizeof(struct tree));
+                                tree* t_tree = (tree*)malloc(sizeof(tree));
                                 create_tree(t_tree);
 
                                 inorder_i(get_parent(index), t_string);
@@ -645,7 +615,7 @@ int main() {
                                 printf("\n\n");
                                 fix(s_params);
 
-                                struct memory_node* mem_index = mem.head;
+                                memory_node* mem_index = mem.head;
                                 int is_equal = 0;
                                 int func_found = 0;
                                 int func_index = 1;
@@ -665,7 +635,7 @@ int main() {
                                         printf("\n");
                                     }
 
-                                    mem_index = mem_index->next;
+                                    to_next(mem_index);
                                     func_index++;
                                     delete_string(t_list);
                                 }
@@ -679,10 +649,7 @@ int main() {
                                 choice = -1;
                                 mem_lenght = 1;
                                 index = mem.head;
-                                while (index != mem.tail) {
-                                    mem_lenght++;
-                                    index = index->next;
-                                }
+                                get_length(index, mem, &mem_lenght);
                                 while (choice < 1 || choice > mem_lenght) {
 
                                     if ((choice < 0 || choice > mem_lenght) && choice != -1) {
@@ -692,9 +659,7 @@ int main() {
                                     scanf("%d", &choice);
                                 }
                                 index = mem.head;
-                                for (int i = 0; i < (choice - 1); i++) {
-                                    index = index->next;
-                                }
+                                move_index(index, choice);
 
                                 printf("Insert x value: ");
 
@@ -702,7 +667,7 @@ int main() {
                                 create_string(x2);
                                 struct string* t_string2 = (struct string*)malloc(sizeof(struct string));
                                 create_string(t_string2);
-                                struct tree* t_tree2 = (struct tree*)malloc(sizeof(struct tree));
+                                tree* t_tree2 = (tree*)malloc(sizeof(tree));
                                 create_tree(t_tree2);
 
                                 inorder_i(get_parent(index), t_string2);

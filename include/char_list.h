@@ -8,39 +8,41 @@ struct c_node {
 typedef struct c_node c_node;
 
 struct string {
-    struct c_node* head;
-    struct c_node* tail;
+    c_node* head;
+    c_node* tail;
 };
 typedef struct string string;
 
-int create_string(struct string* str);
+int create_string(string* str);
 
-int delete_string(struct string* str);
+int delete_string(string* str);
 
-int tail_string_insert(struct string* str, char data);
+int tail_string_insert(string* str, char data);
 
-int head_string_insert(struct string* str, char data);
+int head_string_insert(string* str, char data);
 
-int scan_string(struct string* str);
+int scan_string(string* str);
 
-int print_string(struct string str);
+int print_string(string str);
 
-int delete(struct string* str, char key);
+int delete(string* str, char key);
 
-int modify(struct string* str, char key, char target);
+int modify(string* str, char key, char target);
 
-int compare(struct string* s_params, struct string* t_list);
+int compare(string* s_params, string* t_list);
 
-int get_number(struct string* string);
+int get_number(string* string);
 
-int insert_before(struct string* str, struct c_node* index, char key);
+int insert_before(string* str, c_node* index, char key);
 
-int insert_after(struct string* str, struct c_node* index, char key);
+int insert_after(string* str, c_node* index, char key);
 
-int insert_before_l(struct string* str, struct c_node* index, struct string* string);
+int insert_before_l(string* str, c_node* index, string* string);
 
-int insert_after_l(struct string* str, struct c_node* index, struct string* string);
+int insert_after_l(string* str, c_node* index, string* string);
 
-int to_string(struct string* str, int n);
+int to_string(string* str, int n);
 
-int delete_between(struct string* string, struct c_node* block_start, struct c_node* block_end);
+int delete_between(string* string, c_node* block_start, c_node* block_end);
+
+int fix(string* string);

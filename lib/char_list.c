@@ -30,14 +30,14 @@ void flush_stdin() {
 #else
 
 #endif
-int create_string(struct string* str) {
+int create_string(string* str) {
     str->head = NULL;
     str->tail = NULL;
     return 0;
 }
 
-int tail_string_insert(struct string* str, char data) {
-    struct c_node* n = (struct c_node*)malloc(sizeof(struct c_node));
+int tail_string_insert(string* str, char data) {
+    c_node* n = (c_node*)malloc(sizeof(c_node));
     n->next = NULL;
 
     n->character = data;
@@ -55,8 +55,8 @@ int tail_string_insert(struct string* str, char data) {
     return 0;
 }
 
-int head_string_insert(struct string* str, char data) {
-    struct c_node* n = (struct c_node*)malloc(sizeof(struct c_node));
+int head_string_insert(string* str, char data) {
+    c_node* n = (c_node*)malloc(sizeof(c_node));
     n->previous = NULL;
 
     n->character = data;
@@ -74,7 +74,7 @@ int head_string_insert(struct string* str, char data) {
 }
 
 #ifdef __linux__ 
-int scan_string(struct string* str) {
+int scan_string(string* str) {
     char c = 'a';
 
     static struct termios oldt, newt;
@@ -97,7 +97,7 @@ int scan_string(struct string* str) {
     return 0;
 }
 #elif _WIN32
-int scan_string(struct string* str) {
+int scan_string(string* str) {
     char c = 'a';
 
     str->head = NULL;
@@ -116,8 +116,8 @@ int scan_string(struct string* str) {
 
 #endif
 
-int print_string(struct string str) {
-    struct c_node* index = str.head;
+int print_string(string str) {
+    c_node* index = str.head;
     while (index != NULL) {
         printf("%c", index->character);
         index = index->next;
@@ -126,25 +126,25 @@ int print_string(struct string str) {
     return 0;
 }
 
-int delete(struct string* str, char key) {
-    struct c_node* index = str->head;
+int delete(string* str, char key) {
+    c_node* index = str->head;
 
     while (index != NULL) {
         if(index->character == key) {
             if(index == str->head) {
                 str->head = (str->head)->next;
-                struct c_node* t = index;
+                c_node* t = index;
                 index = str->head;
                 free(t);
             } else if(index->next == NULL) {
                 (index->previous)->next = NULL;
-                struct c_node* t = index;
+                c_node* t = index;
                 str->tail = index->previous;
                 free(t);
             } else {
                 (index->next)->previous = index->previous;
                 (index->previous)->next = index->next;
-                struct c_node* t = index;
+                c_node* t = index;
                 index = index->next;
                 free(t);
             }
@@ -155,8 +155,8 @@ int delete(struct string* str, char key) {
     return 0;
 }
 
-int modify(struct string* str, char key, char target) {
-    struct c_node* index = str->head;
+int modify(string* str, char key, char target) {
+    c_node* index = str->head;
     while(index != NULL) {
         if(index->character == target) index->character = key;
         index = index->next;
@@ -164,12 +164,12 @@ int modify(struct string* str, char key, char target) {
     return 0;
 }
 
-int delete_string(struct string* str) {
+int delete_string(string* str) {
     if(str->head == NULL && str->tail == NULL) {
         free(str);
         return 0;
     }
-    struct c_node* i = str->head;
+    c_node* i = str->head;
     do {
         i = str->head;
         str->head = str->head->next;
@@ -179,13 +179,13 @@ int delete_string(struct string* str) {
     return 0;
 }
 
-int compare(struct string* s_params, struct string* t_list) {
+int compare(string* s_params, string* t_list) {
     int param_length = 0;
     int test_length = 0;
     int is_equal = 1;
 
-    struct c_node* param_index = s_params->head;
-    struct c_node* test_index = t_list->head;
+    c_node* param_index = s_params->head;
+    c_node* test_index = t_list->head;
 
     while(param_index != NULL) {
         param_length++;
@@ -200,7 +200,7 @@ int compare(struct string* s_params, struct string* t_list) {
     if(param_length > test_length) return 2;
 
     int max_offset = (test_length + 1) - param_length;
-    struct c_node* temp_ptr = t_list->head;
+    c_node* temp_ptr = t_list->head;
     int i = 0;
     for(i = 0 ; i < max_offset ; i++) {
         is_equal = 1;
@@ -220,10 +220,10 @@ int compare(struct string* s_params, struct string* t_list) {
     return is_equal;
 }
 
-int get_number(struct string* string) {
+int get_number(string* string) {
     int res = 0;
     int exp = 0;
-    struct c_node* index = string->tail;
+    c_node* index = string->tail;
     while(index->character == ']') {
         index = index->previous;
     }
@@ -243,12 +243,12 @@ int get_number(struct string* string) {
     return res;
 }
 
-int insert_before(struct string* str, struct c_node* index, char key) {
+int insert_before(string* str, c_node* index, char key) {
     if(index->previous == NULL) {
         head_string_insert(str, key);
     } else {
-        struct c_node* temp = index->previous;
-        struct c_node* n = (struct c_node*)malloc(sizeof(struct c_node));
+        c_node* temp = index->previous;
+        c_node* n = (c_node*)malloc(sizeof(c_node));
 
         n->character = key;
 
@@ -261,12 +261,12 @@ int insert_before(struct string* str, struct c_node* index, char key) {
     return 0;
 }
 
-int insert_after(struct string* str, struct c_node* index, char key) {
+int insert_after(string* str, c_node* index, char key) {
     if(index->next == NULL) {
         tail_string_insert(str, key);
     } else {
-        struct c_node* temp = index->next;
-        struct c_node* n = (struct c_node*)malloc(sizeof(struct c_node));
+        c_node* temp = index->next;
+        c_node* n = (c_node*)malloc(sizeof(c_node));
 
         n->character = key;
 
@@ -279,8 +279,8 @@ int insert_after(struct string* str, struct c_node* index, char key) {
     return 0;
 }
 
-int insert_before_l(struct string* str, struct c_node* index, struct string* string) {
-    struct c_node* i = string->head;
+int insert_before_l(string* str, c_node* index, string* string) {
+    c_node* i = string->head;
     while(index != NULL) {
         insert_before(str, index, i->character);
         i = i->next;
@@ -288,8 +288,8 @@ int insert_before_l(struct string* str, struct c_node* index, struct string* str
     return 0;
 }
 
-int insert_after_l(struct string* str, struct c_node* index, struct string* string) {
-    struct c_node* i = string->tail;
+int insert_after_l(string* str, c_node* index, string* string) {
+    c_node* i = string->tail;
     while(index != NULL) {
         insert_after(str, index, i->character);
         i = i->previous;
@@ -297,7 +297,7 @@ int insert_after_l(struct string* str, struct c_node* index, struct string* stri
     return 0;
 }
 
-int to_string(struct string* str, int n) {
+int to_string(string* str, int n) {
     int digits = log10(n) + 1;
 
     for(int i = 0 ; i < digits ; i++) {
@@ -309,12 +309,12 @@ int to_string(struct string* str, int n) {
     return 0;
 }
 
-int delete_between(struct string* string, struct c_node* block_start, struct c_node* block_end) {
+int delete_between(string* string, c_node* block_start, c_node* block_end) {
     if(block_start->previous == NULL && block_end->next != NULL) {
         string->head = block_end->next;
         string->head->previous = NULL;
         do {
-            struct c_node* t = block_start;
+            c_node* t = block_start;
             block_start = block_start->next;
             free(t);
         } while(block_start != block_end);
@@ -323,7 +323,7 @@ int delete_between(struct string* string, struct c_node* block_start, struct c_n
         string->tail = block_start->previous;
         string->tail->next = NULL;
         do {
-            struct c_node* t = block_start;
+            c_node* t = block_start;
             block_start = block_start->next;
             free(t);
         } while(block_start != block_end);
@@ -332,14 +332,14 @@ int delete_between(struct string* string, struct c_node* block_start, struct c_n
         block_start->previous->next = block_end->next;
         block_end->next->previous = block_start->previous;
         do {
-            struct c_node* t = block_start;
+            c_node* t = block_start;
             block_start = block_start->next;
             free(t);
         } while(block_start != block_end);
         free(block_start);
     } else if(block_start->previous == NULL && block_end->next == NULL) {
         do {
-            struct c_node* t = block_start;
+            c_node* t = block_start;
             block_start = block_start->next;
             free(t);
         } while(block_start != block_end);
@@ -349,5 +349,11 @@ int delete_between(struct string* string, struct c_node* block_start, struct c_n
         head_string_insert(string, '0');
     }
 
+    return 0;
+}
+
+int fix(string* string) {
+    string->head->previous = NULL;
+    string->tail->next = NULL;
     return 0;
 }

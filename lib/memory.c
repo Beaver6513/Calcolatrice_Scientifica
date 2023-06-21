@@ -2,14 +2,34 @@
 #include <stdlib.h>
 #include "memory.h"
 
-int create_memory(struct memory* mem) {
+int create_memory(memory* mem) {
     mem->head = NULL;
     mem->tail = NULL;
     return 0;
 }
 
-int add_tree(struct memory* mem, struct tree* out_tree) {
-    struct memory_node* node = (struct memory_node*)malloc(sizeof(struct memory_node));
+int to_next(memory_node* index) {
+    index = index->next;
+    return 0;
+}
+
+int move_index(memory_node* index, int pos) {
+    for(int i = 0 ; i < (pos - 1) ; i++) {
+        index = index->next;
+    }
+    return 0;
+}
+
+int get_length(memory_node* index, memory mem, int* mem_length) {
+    while(index != mem.tail) {
+        *mem_length = *mem_length + 1;
+        index = index->next;
+    }
+    return 0;    
+}
+
+int add_tree(memory* mem, tree* out_tree) {
+    memory_node* node = (memory_node*)malloc(sizeof(memory_node));
     node->next = NULL;
     node->data = out_tree;
 
@@ -24,7 +44,7 @@ int add_tree(struct memory* mem, struct tree* out_tree) {
     }
 
     int count = 0;
-    struct memory_node* index = mem->head;
+    memory_node* index = mem->head;
     while(index != mem->tail) {
         count++;
         index = index->next;
@@ -33,7 +53,7 @@ int add_tree(struct memory* mem, struct tree* out_tree) {
     return count;
 }
 
-int remove_mem_node(struct memory* mem, struct memory_node* target) {
+int remove_mem_node(memory* mem, memory_node* target) {
     remove_tree(target->data);
     if(target->next == NULL && target->previous == NULL) {
         mem->head = NULL;
@@ -52,9 +72,9 @@ int remove_mem_node(struct memory* mem, struct memory_node* target) {
     return 0;
 }
 
-int free_memory(struct memory* mem) {
-    struct memory_node* i = mem->head;
-    struct memory_node* j = mem->head;
+int free_memory(memory* mem) {
+    memory_node* i = mem->head;
+    memory_node* j = mem->head;
     if(i != NULL) {
         do {
             j = j->next;

@@ -1,7 +1,7 @@
 main.o: main.c /usr/include/stdc-predef.h include/char_list.h \
  include/memory.h include/tree.h include/parser.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h include/derivative.h \
- include/files.h /usr/include/stdio.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h include/tree_utils.h \
+ include/derivative.h include/files.h /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -55,6 +55,7 @@ include/memory.h:
 include/tree.h:
 include/parser.h:
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h:
+include/tree_utils.h:
 include/derivative.h:
 include/files.h:
 /usr/include/stdio.h:

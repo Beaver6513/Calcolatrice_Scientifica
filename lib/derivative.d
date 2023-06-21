@@ -1,6 +1,7 @@
 lib/derivative.o: lib/derivative.c /usr/include/stdc-predef.h \
- include/derivative.h include/char_list.h include/tree.h include/parser.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h /usr/include/stdio.h \
+ include/derivative.h include/char_list.h include/tree.h include/memory.h \
+ include/parser.h /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h \
+ /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -54,6 +55,7 @@ lib/derivative.o: lib/derivative.c /usr/include/stdc-predef.h \
 include/derivative.h:
 include/char_list.h:
 include/tree.h:
+include/memory.h:
 include/parser.h:
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h:
 /usr/include/stdio.h:

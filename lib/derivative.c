@@ -6,13 +6,13 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-int get_func_der(struct tree* tree, struct string* out_string) {
-    struct c_node* index = out_string->head;
+int get_func_der(tree* tree, string* out_string) {
+    c_node* index = out_string->head;
     derive_node(tree->tree_head, out_string, index);
     return 0;
 }
 
-int derive_node(struct tree_node* node, struct string* out_string, struct c_node* index) {
+int derive_node(tree_node* node, string* out_string, c_node* index) {
     if(node == NULL) return 0;
 
     if(index == NULL) {
@@ -36,7 +36,7 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
         } else if(isdigit(node->data->head->next->character) && index->character == '@') {
             index->character = '_';
             insert_before(out_string, index, '[');
-            struct c_node* t_index = node->data->tail;
+            c_node* t_index = node->data->tail;
             while(t_index != '_') {
                 insert_after(out_string, index, t_index->character);
                 t_index = t_index->previous;
@@ -56,10 +56,10 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             insert_before(out_string, index->previous->previous->previous, '[');
             insert_after(out_string, index->next->next->next, ']');
 
-            struct c_node* ll_index = index->previous->previous->previous;
-            struct c_node* lr_index = index->previous;
-            struct c_node* rl_index = index->next;
-            struct c_node* rr_index = index->next->next->next;
+            c_node* ll_index = index->previous->previous->previous;
+            c_node* lr_index = index->previous;
+            c_node* rl_index = index->next;
+            c_node* rr_index = index->next->next->next;
 
             derive_node(node->l_child, out_string, ll_index);
             derive_node(node->r_child, out_string, lr_index);
@@ -79,10 +79,10 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             insert_after(out_string, index->next->next->next->next, '#');
             insert_after(out_string, index->next->next->next->next->next, ']');
 
-            struct c_node* ll_index = index->previous->previous->previous->previous;
-            struct c_node* lr_index = index->previous;
-            struct c_node* rl_index = index->next->next;
-            struct c_node* rr_index = index->next->next->next->next->next;
+            c_node* ll_index = index->previous->previous->previous->previous;
+            c_node* lr_index = index->previous;
+            c_node* rl_index = index->next->next;
+            c_node* rr_index = index->next->next->next->next->next;
 
             derive_node(node->l_child, out_string, ll_index);
             derive_node(node->r_child, out_string, lr_index);
@@ -102,10 +102,10 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             insert_after(out_string, index->next->next->next->next, ']');
             insert_after(out_string, index->next->next->next->next->next, ']');
 
-            struct c_node* ll_index = index->previous->previous->previous->previous->previous;
-            struct c_node* lr_index = index->previous->previous;
-            struct c_node* rl_index = index->next;
-            struct c_node* rr_index = index->next->next->next->next;
+            c_node* ll_index = index->previous->previous->previous->previous->previous;
+            c_node* lr_index = index->previous->previous;
+            c_node* rl_index = index->next;
+            c_node* rr_index = index->next->next->next->next;
 
             derive_node(node->l_child, out_string, ll_index);
             derive_node(node->r_child, out_string, lr_index);
@@ -129,10 +129,10 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             insert_before(out_string, index->previous->previous->previous->previous->previous->previous->previous, '[');
             insert_after(out_string, index->next->next->next->next->next->next->next, ']');
 
-            struct c_node* ll_index = index->previous->previous->previous->previous->previous->previous;
-            struct c_node* lr_index = index->previous->previous;
-            struct c_node* rl_index = index->next->next;
-            struct c_node* rr_index = index->next->next->next->next->next->next;
+            c_node* ll_index = index->previous->previous->previous->previous->previous->previous;
+            c_node* lr_index = index->previous->previous;
+            c_node* rl_index = index->next->next;
+            c_node* rr_index = index->next->next->next->next->next->next;
 
             derive_node(node->l_child, out_string, ll_index);
             derive_node(node->r_child, out_string, lr_index);
@@ -159,11 +159,11 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             insert_after(out_string, index->next->next->next->next->next->next->next->next->next, ']');
             
 
-            struct c_node* ll_index = index->previous->previous->previous;
-            struct c_node* lr_index = index->previous;
-            struct c_node* rl_index = index->next;
-            struct c_node* rr_index = index->next->next->next;
-            struct c_node* d_index = index->next->next->next->next->next->next->next;
+            c_node* ll_index = index->previous->previous->previous;
+            c_node* lr_index = index->previous;
+            c_node* rl_index = index->next;
+            c_node* rr_index = index->next->next->next;
+            c_node* d_index = index->next->next->next->next->next->next->next;
 
             derive_node(node->l_child, out_string, ll_index);
             derive_node(node->r_child, out_string, lr_index);
@@ -190,11 +190,11 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next, '2');
             insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next, ']');
 
-            struct c_node* ll_index = index->previous->previous->previous->previous;
-            struct c_node* lr_index = index->previous;
-            struct c_node* rl_index = index->next->next;
-            struct c_node* rr_index = index->next->next->next->next->next;
-            struct c_node* d_index = index->next->next->next->next->next->next->next->next->next;
+            c_node* ll_index = index->previous->previous->previous->previous;
+            c_node* lr_index = index->previous;
+            c_node* rl_index = index->next->next;
+            c_node* rr_index = index->next->next->next->next->next;
+            c_node* d_index = index->next->next->next->next->next->next->next->next->next;
 
             derive_node(node->l_child, out_string, ll_index);
             derive_node(node->r_child, out_string, lr_index);
@@ -223,11 +223,11 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next->next, '2');
             insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next->next->next, ']');
 
-            struct c_node* ll_index = index->previous->previous->previous->previous->previous;
-            struct c_node* lr_index = index->previous->previous;
-            struct c_node* rl_index = index->next;
-            struct c_node* rr_index = index->next->next->next->next;
-            struct c_node* d_index = index->next->next->next->next->next->next->next->next->next->next;
+            c_node* ll_index = index->previous->previous->previous->previous->previous;
+            c_node* lr_index = index->previous->previous;
+            c_node* rl_index = index->next;
+            c_node* rr_index = index->next->next->next->next;
+            c_node* d_index = index->next->next->next->next->next->next->next->next->next->next;
 
             derive_node(node->l_child, out_string, ll_index);
             derive_node(node->r_child, out_string, lr_index);
@@ -260,11 +260,11 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next->next->next->next, '2');
             insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next->next->next->next->next, ']');
 
-            struct c_node* ll_index = index->previous->previous->previous->previous->previous->previous;
-            struct c_node* lr_index = index->previous->previous;
-            struct c_node* rl_index = index->next->next;
-            struct c_node* rr_index = index->next->next->next->next->next->next;
-            struct c_node* d_index = index->next->next->next->next->next->next->next->next->next->next->next->next;
+            c_node* ll_index = index->previous->previous->previous->previous->previous->previous;
+            c_node* lr_index = index->previous->previous;
+            c_node* rl_index = index->next->next;
+            c_node* rr_index = index->next->next->next->next->next->next;
+            c_node* d_index = index->next->next->next->next->next->next->next->next->next->next->next->next;
 
             derive_node(node->l_child, out_string, ll_index);
             derive_node(node->r_child, out_string, lr_index);
@@ -285,8 +285,8 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             insert_before(out_string, index, '#');
             insert_after(out_string, index, '#');
 
-            struct c_node* l_index = index->previous;
-            struct c_node* r_index = index->next;
+            c_node* l_index = index->previous;
+            c_node* r_index = index->next;
 
             derive_node(node->l_child, out_string, l_index);
             derive_node(node->r_child, out_string, r_index);
@@ -296,8 +296,8 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             insert_after(out_string, index->next, '#');
             insert_after(out_string, index->next->next, ']');
 
-            struct c_node* l_index = index->previous;
-            struct c_node* r_index = index->next->next;
+            c_node* l_index = index->previous;
+            c_node* r_index = index->next->next;
 
             derive_node(node->l_child, out_string, l_index);
             derive_node(node->r_child, out_string, r_index);
@@ -307,8 +307,8 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             insert_before(out_string, index->previous->previous, '[');
             insert_after(out_string, index, '#');
 
-            struct c_node* l_index = index->previous->previous;
-            struct c_node* r_index = index->next;
+            c_node* l_index = index->previous->previous;
+            c_node* r_index = index->next;
 
             derive_node(node->l_child, out_string, l_index);
             derive_node(node->r_child, out_string, r_index);
@@ -320,8 +320,8 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
             insert_after(out_string, index->next, '#');
             insert_after(out_string, index->next->next, ']');
 
-            struct c_node* l_index = index->previous->previous;
-            struct c_node* r_index = index->next->next;
+            c_node* l_index = index->previous->previous;
+            c_node* r_index = index->next->next;
 
             derive_node(node->l_child, out_string, l_index);
             derive_node(node->r_child, out_string, r_index);
@@ -334,7 +334,7 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
         insert_before(out_string, index->previous->previous, '[');
         insert_before(out_string, index->previous->previous->previous, '*');
 
-        struct c_node* t_index = node->r_child->data->head;
+        c_node* t_index = node->r_child->data->head;
         int digits = 0;
         while(t_index != NULL) {
             insert_before(out_string, index->previous->previous->previous->previous, t_index->character);
@@ -348,7 +348,7 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
         insert_before(out_string, t_index, '[');
         insert_before(out_string, t_index->previous, '[');
 
-        struct string* new_exponent_str = (struct string*)malloc(sizeof(struct string));
+        string* new_exponent_str = (string*)malloc(sizeof(string));
         create_string(new_exponent_str);
         int exponent = get_number(node->r_child->data);
         exponent--;
@@ -372,8 +372,8 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
         insert_after(out_string, t_index->next->next->next->next, ']');
         insert_after(out_string, t_index->next->next->next->next->next, ']');
 
-        struct c_node* r_index = t_index->next->next->next->next;
-        struct c_node* l_index = index->previous->previous;
+        c_node* r_index = t_index->next->next->next->next;
+        c_node* l_index = index->previous->previous;
         delete_string(new_exponent_str);
 
         derive_node(node->l_child, out_string, l_index);
@@ -383,7 +383,7 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
         insert_before(out_string, index, ']');
         insert_before(out_string, index->previous, '@');
         insert_before(out_string, index->previous->previous, '[');
-        struct c_node* t_index = node->r_child->data->tail;
+        c_node* t_index = node->r_child->data->tail;
         while(t_index != NULL) {
             insert_after(out_string, index, t_index->character);
             t_index = t_index->previous;
@@ -393,7 +393,7 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
         index->character = '0';
     } else if(node->data->head->character == '^' && index->character == '@' && isdigit(node->l_child->data->head->character)) {
         index->character = '^';
-        struct c_node* t_index = node->r_child->data->tail;
+        c_node* t_index = node->r_child->data->tail;
         while(t_index != NULL) {
             insert_after(out_string, index, t_index->character);
             t_index = t_index->previous;
@@ -406,7 +406,7 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
     } else if(node->data->head->character == '^' && index->character == '@' && node->l_child->data->head->character == 'x') {
         index->character = '^';
         insert_before(out_string, index, 'x');
-        struct c_node* t_index = node->r_child->data->tail;
+        c_node* t_index = node->r_child->data->tail;
         while(t_index != NULL) {
             insert_after(out_string, index, t_index->character);
             t_index = t_index->previous;
@@ -545,7 +545,7 @@ int derive_node(struct tree_node* node, struct string* out_string, struct c_node
         index->character = '1';
     } else if(isdigit(node->data->head->character) && index->character == '@') {
         index->character = node->data->head->character;
-        struct c_node* t_index = node->data->tail;
+        c_node* t_index = node->data->tail;
         while(t_index != node->data->head) {
             insert_after(out_string, index, t_index->character);
             t_index = t_index->previous;

@@ -2,21 +2,29 @@
 
 #include "tree.h"
 
-struct memory {
-    struct memory_node* head;
-    struct memory_node* tail;
-};
-
 struct memory_node {
-    struct tree* data;
+    tree* data;
     struct memory_node* next;
     struct memory_node* previous;
 };
+typedef struct memory_node memory_node; 
 
-int create_memory(struct memory* mem);
+struct memory {
+    memory_node* head;
+    memory_node* tail;
+};
+typedef struct memory memory;
 
-int free_memory(struct memory* mem);
+int create_memory(memory* mem);
 
-int remove_mem_node(struct memory* mem, struct memory_node* target);
+int free_memory(memory* mem);
 
-int add_tree(struct memory* mem, struct tree* out_tree);
+int remove_mem_node(memory* mem, memory_node* target);
+
+int add_tree(memory* mem, tree* out_tree);
+
+int move_index(memory_node* index, int pos);
+
+int get_length(memory_node* index, memory mem, int* mem_length);
+
+int to_next(memory_node* index);

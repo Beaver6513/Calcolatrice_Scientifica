@@ -1,6 +1,7 @@
 #include "tree.h"
 #include "char_list.h"
 #include "parser.h"
+#include "memory.h"
 #include <stdbool.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -15,7 +16,11 @@
 #define POW 5
 #define VAR 6
 
-int inorder_s(struct tree_node* node, struct string* x) {
+tree_node* get_parent(memory_node* mem_index) {
+    return mem_index->data->tree_head;
+}
+
+int inorder_s(tree_node* node, string* x) {
     if (node == NULL) return 0;
     inorder_s(node->l_child, x);
     v_substitute(node, x);
@@ -23,7 +28,7 @@ int inorder_s(struct tree_node* node, struct string* x) {
     return 0;
 }
 
-int inorder_dc(struct tree_node* node, char key) {
+int inorder_dc(tree_node* node, char key) {
     if (node == NULL) return 0;
     inorder_dc(node->l_child, key);
     v_delete_char(node, key);
@@ -31,7 +36,7 @@ int inorder_dc(struct tree_node* node, char key) {
     return 0;
 }
 
-int inorder_i(struct tree_node* node, struct string* out_string) {
+int inorder_i(tree_node* node, string* out_string) {
     if (node == NULL) return 0;
     inorder_i(node->l_child, out_string);
     v_insert(node, out_string);
@@ -39,7 +44,7 @@ int inorder_i(struct tree_node* node, struct string* out_string) {
     return 0;
 }
 
-int postorder_r(struct tree_node* node) {
+int postorder_r(tree_node* node) {
     if (node == NULL) return 0;
     postorder_r(node->l_child);
     postorder_r(node->r_child);
@@ -47,30 +52,30 @@ int postorder_r(struct tree_node* node) {
     return 0;
 }
 
-int v_delete(struct tree_node* node) {
+int v_delete(tree_node* node) {
     delete_string(node->data);
     free(node);
     return 0;
 }
 
-int v_delete_char(struct tree_node* node, char key) {
-    struct c_node* index = node->data->head;
+int v_delete_char(tree_node* node, char key) {
+    c_node* index = node->data->head;
     while(index != NULL) {
         if(index->character == key) {
             if(index->previous == NULL) {
-                struct c_node* t = index;
+                c_node* t = index;
                 index->next->previous = NULL;
                 index = index->next;
                 node->data->head = index;
                 free(t);
             } else if(index->next == NULL) {
-                struct c_node* t = index;
+                c_node* t = index;
                 index->previous->next = NULL;
                 index = index->previous;
                 node->data->tail = index;
                 free(t);
             } else if(index->previous != NULL && index->next != NULL) {
-                struct c_node* t = index;
+                c_node* t = index;
                 index->previous->next = index->next;
                 index->next->previous = index->previous;
                 index = index->next;
@@ -83,7 +88,7 @@ int v_delete_char(struct tree_node* node, char key) {
     return 0;
 }
 
-int postorder_rd(struct d_tree_node* node) {
+int postorder_rd(d_tree_node* node) {
     if(node == NULL) return 0;
     postorder_rd(node->l_child);
     postorder_rd(node->r_child);
@@ -91,8 +96,8 @@ int postorder_rd(struct d_tree_node* node) {
     return 0;
 }
 
-int v_substitute(struct tree_node* node, struct string* x) {
-    struct c_node* index = node->data->head;
+int v_substitute(tree_node* node, string* x) {
+    c_node* index = node->data->head;
     while(index != NULL) {
         if(index->next != NULL) {
             if(index->character == '_' && index->next->character == 'x') goto cycle_exit;
@@ -106,7 +111,7 @@ int v_substitute(struct tree_node* node, struct string* x) {
     if(index != NULL) {
         if(index->character == '_' && x->head->character == '_') {
             if(index->previous == NULL) {
-                struct c_node* t = index;
+                c_node* t = index;
                 node->data->head = node->data->head->next;
                 index->next->previous = NULL;
                 index = index->next;
@@ -116,7 +121,7 @@ int v_substitute(struct tree_node* node, struct string* x) {
                 x->head->previous = NULL;
                 free(t);
             } else if(index->previous != NULL) {
-                struct c_node* t = index;
+                c_node* t = index;
                 index->previous->next = index->next;
                 index->next = index->previous;
                 index = index->next;
@@ -126,7 +131,7 @@ int v_substitute(struct tree_node* node, struct string* x) {
                 x->head->previous = NULL;
                 free(t);
             }
-            struct c_node* x_index = x->head;
+            c_node* x_index = x->head;
 
             while(x_index != NULL) {
                 index->character = x_index->character;
@@ -138,7 +143,7 @@ int v_substitute(struct tree_node* node, struct string* x) {
             node->data->tail->next = NULL;
             head_string_insert(x, '_');
         } else if(index->character == '_' && isdigit(x->head->character)) {
-            struct c_node* x_index = x->head;
+            c_node* x_index = x->head;
             index = index->next;
 
             while(x_index != NULL) {
@@ -148,7 +153,7 @@ int v_substitute(struct tree_node* node, struct string* x) {
                 x_index = x_index->next;
             }
         } else if(index->character == 'x' && isdigit(x->head->character)) {
-            struct c_node* x_index = x->head;
+            c_node* x_index = x->head;
 
             while(x_index != NULL) {
                 index->character = x_index->character;
@@ -157,7 +162,7 @@ int v_substitute(struct tree_node* node, struct string* x) {
                 x_index = x_index->next;
             }
         } else if(index->character == 'x' && x->head->character == '_') {
-            struct c_node* x_index = x->head;
+            c_node* x_index = x->head;
 
             while(x_index != NULL) {
                 index->character = x_index->character;
@@ -173,8 +178,8 @@ int v_substitute(struct tree_node* node, struct string* x) {
     return 0;
 }
 
-int v_insert(struct tree_node* node, struct string* out_string) {
-    struct c_node* index = node->data->head;
+int v_insert(tree_node* node, string* out_string) {
+    c_node* index = node->data->head;
     int s = 0;
     do {
         s = 0;
@@ -186,30 +191,30 @@ int v_insert(struct tree_node* node, struct string* out_string) {
     return 0;
 }
 
-int create_tree(struct tree* out_tree) {
+int create_tree(tree* out_tree) {
     out_tree->tree_head = NULL;
     return 0;
 }
 
-int create_d_tree(struct d_tree* out_tree) {
+int create_d_tree(d_tree* out_tree) {
     out_tree->d_tree_head = NULL;
     return 0;
 }
 
-int is_leaf(struct c_node* block_start, struct c_node* block_end) {
-    struct c_node* index = block_start;
+int is_leaf(c_node* block_start, c_node* block_end) {
+    c_node* index = block_start;
     while(index != block_end) {
-        if(is_operator(index->character))
+        if(is_op(index->character))
             return false;
         index = index->next;
     }
     return true;
 }
 
-int load_tree_block(struct c_node* block_start, struct c_node* block_end, struct tree_node* out_node, struct tree* tree, struct string* in_string) {
+int load_tree_block(c_node* block_start, c_node* block_end, tree_node* out_node, tree* tree, string* in_string) {
     if(out_node == NULL) {
-        struct tree_node* node = (struct tree_node*)malloc(sizeof(struct tree_node));
-        struct string* data = (struct string*)malloc(sizeof(struct string));
+        tree_node* node = (tree_node*)malloc(sizeof(tree_node));
+        string* data = (string*)malloc(sizeof(string));
         create_string(data);
         node->data = data;
         out_node = node;
@@ -220,8 +225,8 @@ int load_tree_block(struct c_node* block_start, struct c_node* block_end, struct
     }
     if(!(is_leaf(block_start, block_end))) {
         if(out_node->l_child == NULL) {
-            struct tree_node* l_child = (struct tree_node*)malloc(sizeof(struct tree_node));
-            struct string* data = (struct string*)malloc(sizeof(struct string));
+            tree_node* l_child = (tree_node*)malloc(sizeof(tree_node));
+            string* data = (string*)malloc(sizeof(string));
             create_string(data);
             l_child->data = data;
             l_child->parent = out_node;
@@ -230,8 +235,8 @@ int load_tree_block(struct c_node* block_start, struct c_node* block_end, struct
             out_node->l_child = l_child;
         }
         if(out_node->r_child == NULL) {
-            struct tree_node* r_child = (struct tree_node*)malloc(sizeof(struct tree_node));
-            struct string* data = (struct string*)malloc(sizeof(struct string));
+            tree_node* r_child = (tree_node*)malloc(sizeof(tree_node));
+            string* data = (string*)malloc(sizeof(string));
             create_string(data);
             r_child->data = data;
             r_child->parent = out_node;
@@ -240,21 +245,21 @@ int load_tree_block(struct c_node* block_start, struct c_node* block_end, struct
             out_node->r_child = r_child;
         }
 
-        struct c_node* index = block_start;
+        c_node* index = block_start;
 
         move_to_next_block(&index);
         index = index->next;
 
         if(out_node->data == NULL) {
-            out_node->data = (struct string*)malloc(sizeof(struct string));
+            out_node->data = (string*)malloc(sizeof(string));
             create_string(out_node->data);
         }
         head_string_insert(out_node->data, index->character);
 
-        struct c_node* l_block_end = index;
-        struct c_node* l_block_start = index;
-        struct c_node* r_block_start = index;
-        struct c_node* r_block_end = index;
+        c_node* l_block_end = index;
+        c_node* l_block_start = index;
+        c_node* r_block_start = index;
+        c_node* r_block_end = index;
 
         move_to_previous_block(&l_block_start);
         move_to_next_block(&r_block_end);
@@ -265,7 +270,7 @@ int load_tree_block(struct c_node* block_start, struct c_node* block_end, struct
         load_tree_block(l_block_start, l_block_end, out_node->l_child, tree, in_string);
         load_tree_block(r_block_start, r_block_end, out_node->r_child, tree, in_string);
     } else if(is_leaf(block_start, block_end)) {
-        struct c_node* index = block_start;
+        c_node* index = block_start;
         do {
             if(index->previous != NULL) {
                 if(index->previous->character == '(' || index->previous->character == '[') {
@@ -276,7 +281,7 @@ int load_tree_block(struct c_node* block_start, struct c_node* block_end, struct
         cycle_end:
 
         if(out_node->data == NULL) {
-            out_node->data = (struct string*)malloc(sizeof(struct string));
+            out_node->data = (string*)malloc(sizeof(string));
             create_string(out_node->data);
         }
 
@@ -302,8 +307,9 @@ int load_tree_block(struct c_node* block_start, struct c_node* block_end, struct
     return 0;
 }
 
-int print_tree(struct tree* out_tree) {
-    struct string* out_string = (struct string*)malloc(sizeof(struct string));
+int print_tree(memory_node* node) {
+    tree* out_tree = node->data;
+    string* out_string = (string*)malloc(sizeof(string));
     create_string(out_string);
     inorder_i(out_tree->tree_head, out_string);
     modify(out_string, '(', '[');
@@ -315,7 +321,7 @@ int print_tree(struct tree* out_tree) {
     return 0;
 }
 
-int remove_tree(struct tree* tree) {
+int remove_tree(tree* tree) {
     if(tree == NULL) {
         free(tree);
         return 0;
@@ -325,26 +331,26 @@ int remove_tree(struct tree* tree) {
     return 0;
 }
 
-int remove_d_tree(struct d_tree* tree) {
+int remove_d_tree(d_tree* tree) {
     postorder_rd(tree->d_tree_head);
     free(tree);
     return 0;
 }
 
-double compute(struct d_tree_node* d_node) {
+double compute(d_tree_node* d_node) {
     if(d_node == NULL) return 0;
     compute(d_node->l_child);
     compute(d_node->r_child);
 
-    if(d_node->operator == ADD) {
+    if(d_node->op == ADD) {
         d_node->data = d_node->l_child->data + d_node->r_child->data;
-    } else if(d_node->operator == SUB) {
+    } else if(d_node->op == SUB) {
         d_node->data = d_node->l_child->data - d_node->r_child->data;
-    } else if(d_node->operator == MULT) {
+    } else if(d_node->op == MULT) {
         d_node->data = d_node->l_child->data * d_node->r_child->data;
-    } else if(d_node->operator == DIV) {
+    } else if(d_node->op == DIV) {
         d_node->data = d_node->l_child->data / d_node->r_child->data;
-    } else if(d_node->operator == POW) {
+    } else if(d_node->op == POW) {
         d_node->data = pow(d_node->l_child->data, d_node->r_child->data);
     }
 
@@ -352,39 +358,39 @@ double compute(struct d_tree_node* d_node) {
     return 0;
 }
 
-double get_func_in_x(struct tree* in_tree, struct string* x) {
-    struct d_tree* d_tree = (struct d_tree*)malloc(sizeof(struct d_tree));
-    create_d_tree(d_tree);
+double get_func_in_x(tree* in_tree, string* x) {
+    d_tree* digit_tree = (d_tree*)malloc(sizeof(d_tree));
+    create_d_tree(digit_tree);
     inorder_s(in_tree->tree_head, x);
-    transfer_to_d_tree(in_tree, d_tree);
-    double res = compute(d_tree->d_tree_head);
-    remove_d_tree(d_tree);
+    transfer_to_d_tree(in_tree, digit_tree);
+    double res = compute(digit_tree->d_tree_head);
+    remove_d_tree(digit_tree);
     return res;
 }
 
-int copy_to_d_node(struct tree_node* node, struct d_tree_node* d_node, struct d_tree* d_tree) {
+int copy_to_d_node(tree_node* node, d_tree_node* d_node, d_tree* d_tree) {
     if(node == NULL && d_node == NULL) return 0;
 
     if (d_node == NULL && node != NULL) {
-        struct d_tree_node* new_d_node = (struct d_tree_node*)malloc(sizeof(struct d_tree_node));
+        d_tree_node* new_d_node = (d_tree_node*)malloc(sizeof(d_tree_node));
         d_tree->d_tree_head = new_d_node;
         new_d_node->data = 0;
         new_d_node->l_child = NULL;
         new_d_node->r_child = NULL;
-        new_d_node->operator = DIGIT;
+        new_d_node->op = DIGIT;
         new_d_node->parent = NULL;
         d_node = new_d_node;
     }
 
     if(is_operator(node->data->head->character) && d_node->l_child == NULL && d_node->r_child == NULL) {
-        struct d_tree_node* new_l_d_node = (struct d_tree_node*)malloc(sizeof(struct d_tree_node));
-        struct d_tree_node* new_r_d_node = (struct d_tree_node*)malloc(sizeof(struct d_tree_node));
+        d_tree_node* new_l_d_node = (d_tree_node*)malloc(sizeof(d_tree_node));
+        d_tree_node* new_r_d_node = (d_tree_node*)malloc(sizeof(d_tree_node));
         d_node->l_child = new_l_d_node;
         d_node->r_child = new_r_d_node;
         d_node->l_child->data = 0;
         d_node->r_child->data = 0;
-        d_node->l_child->operator = DIGIT;
-        d_node->r_child->operator = DIGIT;
+        d_node->l_child->op = DIGIT;
+        d_node->r_child->op = DIGIT;
         d_node->l_child->parent = d_node;
         d_node->r_child->parent = d_node;
         d_node->l_child->l_child = NULL;
@@ -401,17 +407,17 @@ int copy_to_d_node(struct tree_node* node, struct d_tree_node* d_node, struct d_
     }
     
     if(node->data->head->character == '+') {
-        d_node->operator = ADD;
+        d_node->op = ADD;
     } else if(node->data->head->character == '-') {
-        d_node->operator = SUB;
+        d_node->op = SUB;
     } else if(node->data->head->character == '*') {
-        d_node->operator = MULT;
+        d_node->op = MULT;
     } else if(node->data->head->character == '/') {
-        d_node->operator = DIV;
+        d_node->op = DIV;
     } else if(node->data->head->character == '^') {
-        d_node->operator = POW;
+        d_node->op = POW;
     } else {
-        d_node->operator = DIGIT;
+        d_node->op = DIGIT;
         int n = get_number(node->data);
         d_node->data = n;
     }
@@ -419,12 +425,12 @@ int copy_to_d_node(struct tree_node* node, struct d_tree_node* d_node, struct d_
     return 0;
 }
 
-int transfer_to_d_tree(struct tree* tree, struct d_tree* d_tree) {
+int transfer_to_d_tree(tree* tree, d_tree* d_tree) {
     copy_to_d_node(tree->tree_head, d_tree->d_tree_head, d_tree);
     return 0;
 }
 
-int delete_from_tree(struct tree* tree, char key) {
+int delete_from_tree(tree* tree, char key) {
     inorder_dc(tree->tree_head, key);
     return 0;
 }

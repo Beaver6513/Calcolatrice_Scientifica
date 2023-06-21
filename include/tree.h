@@ -1,58 +1,61 @@
 #pragma once
 
 #include "char_list.h"
+#include "memory.h"
 
 struct tree_node {
-    struct string* data;
+    string* data;
     struct tree_node* parent;
     struct tree_node* l_child;
     struct tree_node* r_child;
 };
+typedef struct tree_node tree_node;
 
 struct d_tree_node {
     double data;
-    int operator;
+    int op;
     struct d_tree_node* parent;
     struct d_tree_node* l_child;
     struct d_tree_node* r_child;
 };
+typedef struct d_tree_node d_tree_node;
 
 struct tree {
-    struct tree_node* tree_head;
+    tree_node* tree_head;
 };
+typedef struct tree tree;
 
 struct d_tree {
-    struct d_tree_node* d_tree_head;
+    d_tree_node* d_tree_head;
 };
+typedef struct d_tree d_tree;
 
-int create_tree(struct tree* out_tree);
+int create_tree(tree* out_tree);
 
-int create_d_tree(struct d_tree* out_tree);
+int create_d_tree(d_tree* out_tree);
 
-int is_leaf(struct c_node* block_start, struct c_node* block_end);
+int is_leaf(c_node* block_start, c_node* block_end);
 
-int load_tree(struct tree* out_tree, struct string* str);
+int load_tree(tree* out_tree, string* str);
 
-int load_tree_block(struct c_node* block_start, struct c_node* block_end, struct tree_node* out_node, struct tree* out_tree, struct string* in_string);
+int load_tree_block(c_node* block_start, c_node* block_end, tree_node* out_node, tree* out_tree, string* in_string);
 
-int print_tree(struct tree* out_tree);
+int v_insert(tree_node* node, string* out_string);
 
-int v_insert(struct tree_node* node, struct string* out_string);
+int v_delete(tree_node* node);
 
-int v_delete(struct tree_node* node);
+int v_delete_char(tree_node* node, char key);
 
-int v_delete_char(struct tree_node* node, char key);
+int inorder_i(tree_node* node, string* out_string);
 
-int inorder_i(struct tree_node* node, struct string* out_string);
+int postorder_r(tree_node* node);
 
-int postorder_r(struct tree_node* node);
+int postorder_rd(d_tree_node* node);
 
-int postorder_rd(struct d_tree_node* node);
+int remove_tree(tree* tree);
 
-int remove_tree(struct tree* tree);
+int remove_d_tree(d_tree* tree);
 
-int remove_d_tree(struct d_tree* tree);
+int v_substitute(tree_node* node, string* x);
 
-int v_substitute(struct tree_node* node, struct string* x);
-
-int delete_from_tree(struct tree* tree, char key);
+int delete_from_tree(tree* tree, char key);
