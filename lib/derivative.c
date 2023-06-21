@@ -37,7 +37,7 @@ int derive_node(tree_node* node, string* out_string, c_node* index) {
             index->character = '_';
             insert_before(out_string, index, '[');
             c_node* t_index = node->data->tail;
-            while(t_index != '_') {
+            while(t_index->character != '_') {
                 insert_after(out_string, index, t_index->character);
                 t_index = t_index->previous;
             }

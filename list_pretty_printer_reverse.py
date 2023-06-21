@@ -60,7 +60,7 @@ class ListDumpCmd(gdb.Command):
         # to do argument parsing
 
         node_ptr_val = gdb.parse_and_eval(args)
-        if str(node_ptr_val.type) != "struct c_node *":
+        if str(node_ptr_val.type) != "c_node *":
             print("Expected pointer argument of type (c_node)")
             print(str(node_ptr_val.type))
             return

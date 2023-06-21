@@ -20,8 +20,6 @@ void clear_screen() {
 
 #endif
 
-
-
 int main() {
     int choice = 0;
     memory mem;
@@ -71,7 +69,8 @@ int main() {
                 delete_string(str);
                 int pos = add_tree(&mem, function);
                 printf("\nAdded Function in position: %d\nPress enter to return to main menu...", pos + 1);
-                flush_stdin();
+                int k;
+                while ((k = getchar()) != '\n' && k != EOF);
             }
             break;
             case 2:
@@ -244,7 +243,8 @@ int main() {
                     default:
                         exit(1);
                 }
-                flush_stdin();
+                int k;
+                while ((k = getchar()) != '\n' && k != EOF);
             break;
             case 4:
                 choice = -1;
@@ -311,7 +311,8 @@ int main() {
                         move_index(index, choice + 1);
                         printf("Function :   ");
                         print_tree(index);
-                        flush_stdin();
+                        int k;
+                        while ((k = getchar()) != '\n' && k != EOF);
                         printf("\nPress enter to return to main menu...");
                     break;
                     case 2:
@@ -326,7 +327,7 @@ int main() {
                             to_next(index);
                             count++;
                         }
-                        flush_stdin();
+                        while ((k = getchar()) != '\n' && k != EOF);
                         printf("\nPress enter to return to main menu...");
                     break;
                     case 3:
@@ -428,7 +429,8 @@ int main() {
                                 delete_string(der_string);
                                 delete_string(t_string);
                                 remove_tree(t_tree);
-                                flush_stdin();
+                                int k;
+                                while ((k = getchar()) != '\n' && k != EOF);
                                 getchar();
                             break;
                             case 2:
@@ -534,7 +536,8 @@ int main() {
                                 delete_string(der_string);
                                 delete_string(t_string);
                                 remove_tree(t_tree);
-                                flush_stdin();
+                                int k;
+                                while ((k = getchar()) != '\n' && k != EOF);
                                 getchar();
                             }
                             break;
@@ -602,7 +605,8 @@ int main() {
                                 delete_string(x);
                                 delete_string(t_string);
                                 remove_tree(t_tree);
-                                flush_stdin();
+                                int k;
+                                while ((k = getchar()) != '\n' && k != EOF);
                             break;
                             case 2:
                             {
@@ -690,7 +694,8 @@ int main() {
                                 delete_string(x2);
                                 delete_string(t_string2);
                                 remove_tree(t_tree2);
-                                flush_stdin();
+                                int k;
+                                while ((k = getchar()) != '\n' && k != EOF);
                             }
                             break;
                             case 3:

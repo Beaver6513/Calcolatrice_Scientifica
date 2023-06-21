@@ -1,7 +1,6 @@
 #pragma once
 
 #include "char_list.h"
-#include "memory.h"
 
 struct tree_node {
     string* data;

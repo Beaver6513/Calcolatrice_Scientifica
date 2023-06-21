@@ -2,6 +2,7 @@
 #include "char_list.h"
 #include "parser.h"
 #include "memory.h"
+#include "derivative.h"
 #include <stdbool.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -15,10 +16,6 @@
 #define DIV 4
 #define POW 5
 #define VAR 6
-
-tree_node* get_parent(memory_node* mem_index) {
-    return mem_index->data->tree_head;
-}
 
 int inorder_s(tree_node* node, string* x) {
     if (node == NULL) return 0;
@@ -204,21 +201,21 @@ int create_d_tree(d_tree* out_tree) {
 int is_leaf(c_node* block_start, c_node* block_end) {
     c_node* index = block_start;
     while(index != block_end) {
-        if(is_op(index->character))
+        if(is_operator(index->character))
             return false;
         index = index->next;
     }
     return true;
 }
 
-int load_tree_block(c_node* block_start, c_node* block_end, tree_node* out_node, tree* tree, string* in_string) {
+int load_tree_block(c_node* block_start, c_node* block_end, tree_node* out_node, tree* out_tree, string* in_string) {
     if(out_node == NULL) {
         tree_node* node = (tree_node*)malloc(sizeof(tree_node));
         string* data = (string*)malloc(sizeof(string));
         create_string(data);
         node->data = data;
         out_node = node;
-        tree->tree_head = node;
+        out_tree->tree_head = node;
         node->parent = NULL;
         node->l_child = NULL;
         node->r_child = NULL;
@@ -267,8 +264,8 @@ int load_tree_block(c_node* block_start, c_node* block_end, tree_node* out_node,
         l_block_end = index->previous;
         r_block_start = index->next;
 
-        load_tree_block(l_block_start, l_block_end, out_node->l_child, tree, in_string);
-        load_tree_block(r_block_start, r_block_end, out_node->r_child, tree, in_string);
+        load_tree_block(l_block_start, l_block_end, out_node->l_child, out_tree, in_string);
+        load_tree_block(r_block_start, r_block_end, out_node->r_child, out_tree, in_string);
     } else if(is_leaf(block_start, block_end)) {
         c_node* index = block_start;
         do {
@@ -304,20 +301,6 @@ int load_tree_block(c_node* block_start, c_node* block_end, tree_node* out_node,
         }
     cycle2_end:;
     }
-    return 0;
-}
-
-int print_tree(memory_node* node) {
-    tree* out_tree = node->data;
-    string* out_string = (string*)malloc(sizeof(string));
-    create_string(out_string);
-    inorder_i(out_tree->tree_head, out_string);
-    modify(out_string, '(', '[');
-    modify(out_string, ')', ']');
-    modify(out_string, '-', '_');
-    contract(out_string);
-    print_string(*out_string);
-    delete_string(out_string);
     return 0;
 }
 

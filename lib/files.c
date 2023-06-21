@@ -1,6 +1,7 @@
 #include "files.h"
 #include "memory.h"
 #include "char_list.h"
+#include "parser.h"
 #include "tree.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,17 +17,17 @@ int save_mem(memory mem) {
     memory_node* mem_index = mem.head;
 
     while(mem_index != NULL) {
-        string* string = (string*)malloc(sizeof(string));
-        create_string(string);
+        string* str = (string*)malloc(sizeof(string));
+        create_string(str);
 
-        inorder_i(mem_index->data->tree_head, string);
-        string->head->previous = NULL;
-        string->tail->next = NULL;
-        modify(string, '[', '(');
-        modify(string, ']', ')');
-        delete(string, ' ');
+        inorder_i(mem_index->data->tree_head, str);
+        str->head->previous = NULL;
+        str->tail->next = NULL;
+        modify(str, '[', '(');
+        modify(str, ']', ')');
+        delete(str, ' ');
 
-        c_node* list_index = string->head;
+        c_node* list_index = str->head;
         while(list_index != NULL) {
             putc(list_index->character, file);
             list_index = list_index->next;
@@ -34,7 +35,7 @@ int save_mem(memory mem) {
         putc('\n', file);
 
         mem_index = mem_index->next;
-        delete_string(string);
+        delete_string(str);
     }
 
     fclose(file);

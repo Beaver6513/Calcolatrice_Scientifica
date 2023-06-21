@@ -14,22 +14,6 @@
 
 #endif
 
-
-
-
-#ifdef __linux__ 
-void flush_stdin() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-}
-#elif _WIN32
-void flush_stdin() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-}
-#else
-
-#endif
 int create_string(string* str) {
     str->head = NULL;
     str->tail = NULL;
@@ -86,7 +70,8 @@ int scan_string(string* str) {
     str->head = NULL;
     str->tail = NULL;
 
-    flush_stdin();
+    int k;
+    while ((k = getchar()) != '\n' && k != EOF);
     while (1) {
         c = getchar();
         if (c == '\n') break;
