@@ -23,8 +23,8 @@ int remove_mem_node(memory* mem, memory_node* target);
 
 int add_tree(memory* mem, tree* out_tree);
 
-int move_index(memory_node* index, int pos);
+int move_index(memory_node** index, int pos);
 
 int get_length(memory_node* index, memory mem, int* mem_length);
 
-int to_next(memory_node* index);
+int to_next(memory_node** index);

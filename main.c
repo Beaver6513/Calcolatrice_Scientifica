@@ -101,7 +101,7 @@ int main() {
                             scanf("%d", &choice);
                         }
                         index = mem.head;
-                        move_index(index, choice);
+                        move_index(&index, choice);
 
                         remove_mem_node(&mem, index);
                         printf("\nFunction deleted!\nPress enter to return to main menu...");
@@ -139,7 +139,7 @@ int main() {
                                 printf("\n");
                             }
 
-                            to_next(mem_index);
+                            to_next(&mem_index);
                             func_index++;
                             delete_string(t_list);
                         }
@@ -163,7 +163,7 @@ int main() {
                             scanf("%d", &choice);
                         }
                         index = mem.head;
-                        move_index(index, choice);
+                        move_index(&index, choice);
 
                         remove_mem_node(&mem, index);
                         printf("\nFunction deleted!\nPress enter to return to main menu...");
@@ -224,7 +224,7 @@ int main() {
                                 printf("\n");
                             }
 
-                            to_next(mem_index);
+                            to_next(&mem_index);
                             func_index++;
                             delete_string(t_list);
                         }
@@ -261,7 +261,7 @@ int main() {
                     scanf("%d", &choice);
                 }
                 index = mem.head;
-                move_index(index, choice);
+                move_index(&index, choice);
 
                 tree* function_2 = (tree*)malloc(sizeof(tree));
                 create_tree(function_2);
@@ -308,7 +308,7 @@ int main() {
                         }
                         printf("\n");
                         index = mem.head;
-                        move_index(index, choice + 1);
+                        move_index(&index, choice + 1);
                         printf("Function :   ");
                         print_tree(index);
                         int k;
@@ -324,7 +324,7 @@ int main() {
                             printf("Function :   ");
                             print_tree(index);
                             printf("\n");
-                            to_next(index);
+                            to_next(&index);
                             count++;
                         }
                         while ((k = getchar()) != '\n' && k != EOF);
@@ -378,7 +378,7 @@ int main() {
                                     scanf("%d", &choice);
                                 }
                                 index = mem.head;
-                                move_index(index, choice);
+                                move_index(&index, choice);
 
                                 struct string* t_string = (struct string*)malloc(sizeof(struct string));
                                 create_string(t_string);
@@ -462,7 +462,7 @@ int main() {
                                         printf("\n");
                                     }
 
-                                    to_next(mem_index);
+                                    to_next(&mem_index);
                                     func_index++;
                                     delete_string(t_list);
                                 }
@@ -485,7 +485,7 @@ int main() {
                                     scanf("%d", &choice);
                                 }
                                 index = mem.head;
-                                move_index(index, choice);
+                                move_index(&index, choice);
 
                                 struct string* t_string = (struct string*)malloc(sizeof(struct string));
                                 create_string(t_string);
@@ -575,7 +575,7 @@ int main() {
                                     scanf("%d", &choice);
                                 }
                                 index = mem.head;
-                                move_index(index, choice);
+                                move_index(&index, choice);
                                 printf("Insert x value: ");
 
                                 struct string* x = (struct string*)malloc(sizeof(struct string));
@@ -639,7 +639,7 @@ int main() {
                                         printf("\n");
                                     }
 
-                                    to_next(mem_index);
+                                    to_next(&mem_index);
                                     func_index++;
                                     delete_string(t_list);
                                 }
@@ -663,7 +663,7 @@ int main() {
                                     scanf("%d", &choice);
                                 }
                                 index = mem.head;
-                                move_index(index, choice);
+                                move_index(&index, choice);
 
                                 printf("Insert x value: ");
 

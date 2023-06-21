@@ -8,14 +8,14 @@ int create_memory(memory* mem) {
     return 0;
 }
 
-int to_next(memory_node* index) {
-    index = index->next;
+int to_next(memory_node** index) {
+    (*index) = (*index)->next;
     return 0;
 }
 
-int move_index(memory_node* index, int pos) {
+int move_index(memory_node** index, int pos) {
     for(int i = 0 ; i < (pos - 1) ; i++) {
-        index = index->next;
+        (*index) = (*index)->next;
     }
     return 0;
 }
