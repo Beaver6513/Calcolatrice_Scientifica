@@ -59,8 +59,7 @@ int main() {
                 clear_screen();
                 printf("Insert function: ");
                 scan_string(str);
-                str->head->previous = NULL;
-                str->tail->next = NULL;
+                fix(str);
                 modify(str, '[', '(');
                 modify(str, ']', ')');
                 delete(str, ' ');
@@ -105,9 +104,7 @@ int main() {
                             scanf("%d", &choice);
                         }
                         index = mem.head;
-                        for (int i = 0; i < (choice - 1) ; i++) {
-                            index = index->next;
-                        }
+                        move_index(index, choice);
 
                         remove_mem_node(&mem, index);
                         printf("\nFunction deleted!\nPress enter to return to main menu...");
@@ -122,8 +119,7 @@ int main() {
                         printf("Input search parameters :  ");
                         scan_string(s_params);
                         printf("\n\n");
-                        s_params->head->previous = NULL;
-                        s_params->tail->next = NULL;
+                        fix(s_params);
 
                         struct memory_node* mem_index = mem.head;
                         int is_equal = 0;
@@ -132,7 +128,7 @@ int main() {
                         while (mem_index != NULL) {
                             struct string* t_list = (struct string*)malloc(sizeof(struct string));
                             create_string(t_list);
-                            inorder_i(mem_index->data->tree_head, t_list);
+                            inorder_i(get_parent(mem_index), t_list);
                             modify(t_list, '(', '[');
                             modify(t_list, ')', ']');
                             modify(t_list, '-', '_');
@@ -213,8 +209,7 @@ int main() {
                         printf("Input search parameters :  ");
                         scan_string(s_params);
                         printf("\n\n");
-                        s_params->head->previous = NULL;
-                        s_params->tail->next = NULL;
+                        fix(s_params);
 
                         struct memory_node* mem_index = mem.head;
                         int is_equal = 0;
@@ -223,7 +218,7 @@ int main() {
                         while (mem_index != NULL) {
                             struct string* t_list = (struct string*)malloc(sizeof(struct string));
                             create_string(t_list);
-                            inorder_i(mem_index->data->tree_head, t_list);
+                            inorder_i(get_parent(mem_index), t_list);
                             modify(t_list, '(', '[');
                             modify(t_list, ')', ']');
                             modify(t_list, '-', '_');
@@ -285,8 +280,7 @@ int main() {
                 struct string* t_list = (struct string*)malloc(sizeof(struct string));
                 create_string(t_list);
                 inorder_i(index->data->tree_head, t_list);
-                t_list->head->previous = NULL;
-                t_list->tail->next = NULL;
+                fix(t_list);
                 splice(t_list);
                 group_string(t_list);
                 load_tree(function_2, t_list);
@@ -415,8 +409,7 @@ int main() {
                                 create_tree(out_tree);
 
                                 inorder_i(index->data->tree_head, t_string);
-                                t_string->head->previous = NULL;
-                                t_string->tail->next = NULL;
+                                fix(t_string);
                                 modify(t_string, '[', '(');
                                 modify(t_string, ']', ')');
                                 delete(t_string, ' ');
@@ -432,8 +425,7 @@ int main() {
                                 create_string(der_string);
 
                                 get_func_der(t_tree, der_string);
-                                der_string->head->previous = NULL;
-                                der_string->tail->next = NULL;
+                                fix(der_string);
 
                                 while(mult_delete(der_string, der_string->head));
                                 par_check(der_string);
@@ -443,8 +435,7 @@ int main() {
                                 print_string(*der_string);
                                 printf("\n");
 
-                                der_string->head->previous = NULL;
-                                der_string->tail->next = NULL;
+                                fix(der_string);
                                 modify(der_string, '[', '(');
                                 modify(der_string, ']', ')');
                                 delete(der_string, ' ');
@@ -471,8 +462,7 @@ int main() {
                                 printf("Input search parameters :  ");
                                 scan_string(s_params);
                                 printf("\n\n");
-                                s_params->head->previous = NULL;
-                                s_params->tail->next = NULL;
+                                fix(s_params);
 
                                 struct memory_node* mem_index = mem.head;
                                 int func_found = 0;
@@ -480,7 +470,7 @@ int main() {
                                 while (mem_index != NULL) {
                                     struct string* t_list = (struct string*)malloc(sizeof(struct string));
                                     create_string(t_list);
-                                    inorder_i(mem_index->data->tree_head, t_list);
+                                    inorder_i(get_parent(mem_index), t_list);
                                     modify(t_list, '(', '[');
                                     modify(t_list, ')', ']');
                                     contract(t_list);
@@ -518,9 +508,7 @@ int main() {
                                     scanf("%d", &choice);
                                 }
                                 index = mem.head;
-                                for (int i = 0; i < (choice - 1); i++) {
-                                    index = index->next;
-                                }
+                                move_index(index, choice);
 
                                 struct string* t_string = (struct string*)malloc(sizeof(struct string));
                                 create_string(t_string);
@@ -529,9 +517,8 @@ int main() {
                                 struct tree* out_tree = (struct tree*)malloc(sizeof(struct tree));
                                 create_tree(out_tree);
 
-                                inorder_i(index->data->tree_head, t_string);
-                                t_string->head->previous = NULL;
-                                t_string->tail->next = NULL;
+                                inorder_i(get_parent(index), t_string);
+                                fix(t_string);
                                 modify(t_string, '[', '(');
                                 modify(t_string, ']', ')');
                                 delete(t_string, ' ');
@@ -547,8 +534,7 @@ int main() {
                                 create_string(der_string);
 
                                 get_func_der(t_tree, der_string);
-                                der_string->head->previous = NULL;
-                                der_string->tail->next = NULL;
+                                fix(der_string);
                                 
                                 while(mult_delete(der_string, der_string->head));
                                 par_check(der_string);
@@ -557,9 +543,8 @@ int main() {
                                 printf("Function derivative :  ");
                                 print_string(*der_string);
                                 printf("\n");
+                                fix(der_string);
 
-                                der_string->head->previous = NULL;
-                                der_string->tail->next = NULL;
                                 modify(der_string, '[', '(');
                                 modify(der_string, ']', ')');
                                 delete(der_string, ' ');
@@ -627,9 +612,8 @@ int main() {
                                 struct tree* t_tree = (struct tree*)malloc(sizeof(struct tree));
                                 create_tree(t_tree);
 
-                                inorder_i(index->data->tree_head, t_string);
-                                t_string->head->previous = NULL;
-                                t_string->tail->next = NULL;
+                                inorder_i(get_parent(index), t_string);
+                                fix(t_string);
                                 modify(t_string, '[', '(');
                                 modify(t_string, ']', ')');
                                 delete(t_string, ' ');
@@ -659,8 +643,7 @@ int main() {
                                 printf("Input search parameters :  ");
                                 scan_string(s_params);
                                 printf("\n\n");
-                                s_params->head->previous = NULL;
-                                s_params->tail->next = NULL;
+                                fix(s_params);
 
                                 struct memory_node* mem_index = mem.head;
                                 int is_equal = 0;
@@ -669,7 +652,7 @@ int main() {
                                 while (mem_index != NULL) {
                                     struct string* t_list = (struct string*)malloc(sizeof(struct string));
                                     create_string(t_list);
-                                    inorder_i(mem_index->data->tree_head, t_list);
+                                    inorder_i(get_parent(mem_index), t_list);
                                     modify(t_list, '(', '[');
                                     modify(t_list, ')', ']');
                                     contract(t_list);
@@ -722,9 +705,8 @@ int main() {
                                 struct tree* t_tree2 = (struct tree*)malloc(sizeof(struct tree));
                                 create_tree(t_tree2);
 
-                                inorder_i(index->data->tree_head, t_string2);
-                                t_string2->head->previous = NULL;
-                                t_string2->tail->next = NULL;
+                                inorder_i(get_parent(index), t_string2);
+                                fix(t_string2);
                                 modify(t_string2, '[', '(');
                                 modify(t_string2, ']', ')');
                                 delete(t_string2, ' ');
