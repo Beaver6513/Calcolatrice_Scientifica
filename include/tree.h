@@ -58,3 +58,5 @@ int remove_d_tree(d_tree* tree);
 int v_substitute(tree_node* node, string* x);
 
 int delete_from_tree(tree* tree, char key);
+
+tree_node* get_head_tree(tree* in_tree);

@@ -7,8 +7,8 @@
 #include <ctype.h>
 
 int get_func_der(tree* tree, string* out_string) {
-    c_node* index = out_string->head;
-    derive_node(tree->tree_head, out_string, index);
+    c_node* index = get_head_str(out_string);
+    derive_node(get_head_tree(tree), out_string, index);
     return 0;
 }
 
@@ -17,7 +17,7 @@ int derive_node(tree_node* node, string* out_string, c_node* index) {
 
     if(index == NULL) {
         head_string_insert(out_string, '#');
-        index = out_string->head;
+        index = get_head_str(out_string);
     }
 
     if(node->data->head->character == '_') {
@@ -44,7 +44,7 @@ int derive_node(tree_node* node, string* out_string, c_node* index) {
         }
     }
     if(node->data->head->character == '*' && index->character == '#') {
-        index->character = '+';
+        set_char(index, '+');
 
         if(!is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
             insert_before(out_string, index, '@');
@@ -140,7 +140,7 @@ int derive_node(tree_node* node, string* out_string, c_node* index) {
             derive_node(node->r_child, out_string, rr_index);
         } 
     } else if(node->data->head->character == '/' && index->character == '#') {
-        index->character = '-';
+        set_char(index, '-');
 
         if(!is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
             insert_before(out_string, index, '@');
@@ -274,10 +274,10 @@ int derive_node(tree_node* node, string* out_string, c_node* index) {
         } 
     } else if((node->data->head->character == '+' || node->data->head->character == '-') && index->character == '#') {
         if(node->data->head->character == '+') {
-            index->character = '+';
+            set_char(index, '+');
         }
         if(node->data->head->character == '-') {
-            index->character = '-';
+            set_char(index, '-');
         }
             
 
@@ -327,7 +327,7 @@ int derive_node(tree_node* node, string* out_string, c_node* index) {
             derive_node(node->r_child, out_string, r_index);
         }
     } else if(node->data->head->character == '^' && index->character == '#' && (is_operator(node->l_child->data->head->character) || node->l_child->data->head->character == 'x')) {
-        index->character = '^';
+        set_char(index, '^');
 
         insert_before(out_string, index, ']');
         insert_before(out_string, index->previous, '@');

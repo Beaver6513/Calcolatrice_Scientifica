@@ -5,10 +5,10 @@
 #include "parser.h"
 
 int print_tree(memory_node* node) {
-    tree* out_tree = node->data;
+    tree* out_tree = get_tree_from_mem_index(node);
     string* out_string = (string*)malloc(sizeof(string));
     create_string(out_string);
-    inorder_i(out_tree->tree_head, out_string);
+    inorder_i(get_head_tree(out_tree), out_string);
     modify(out_string, '(', '[');
     modify(out_string, ')', ']');
     modify(out_string, '-', '_');
@@ -16,9 +16,4 @@ int print_tree(memory_node* node) {
     print_string(*out_string);
     delete_string(out_string);
     return 0;
-}
-
-
-tree_node* get_parent(memory_node* mem_index) {
-    return mem_index->data->tree_head;
 }

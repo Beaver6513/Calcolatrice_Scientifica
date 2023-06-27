@@ -27,4 +27,10 @@ int move_index(memory_node** index, int pos);
 
 int get_length(memory_node* index, memory mem, int* mem_length);
 
-int to_next(memory_node** index);
+int to_next_mem(memory_node** index);
+
+memory_node* get_head_mem(memory* mem);
+
+tree_node* get_tree_head_from_mem_index(memory_node* index);
+
+tree* get_tree_from_mem_index(memory_node* index);

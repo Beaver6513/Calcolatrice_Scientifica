@@ -30,8 +30,6 @@ int mult_delete(string* string);
 
 int mult_delete_r(string* string, c_node* index);
 
-int one_mult_delete(string* string);
-
 int par_check(string* string);
 
 int check_limits(c_node* tl_index, c_node* tr_index, string* string);

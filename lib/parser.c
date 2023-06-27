@@ -7,93 +7,93 @@
 #include <stdbool.h>
 
 int expand_string(string* str) {
-    c_node* index = str->head;
+    c_node* index = get_head_str(str);
 
-    while(index->next != NULL) {
-        if((isdigit(index->character) || index->character == 'x') && index->next->character == '[') insert_after(str, index, '*');
+    while(get_next_str(str) != NULL) {
+        if((isdigit(get_char(index)) || get_char(index) == 'x') && get_char(get_next_str(index)) == '[') insert_after(str, index, '*');
 
-        else if(index->character == ']' && (isdigit(index->next->character) || index->next->character == 'x')) insert_after(str, index, '*');
+        else if(get_char(index) == ']' && (isdigit(get_char(get_next_str(index))) || get_char(get_next_str(index)) == 'x')) insert_after(str, index, '*');
 
-        else if(index->character == ']' && index->next->character == '[') insert_after(str, index, '*');
+        else if(get_char(index) == ']' && get_char(get_next_str(index)) == '[') insert_after(str, index, '*');
 
-        else if(isdigit(index->character) && index->next->character == 'x') insert_after(str, index, '*');
+        else if(isdigit(get_char(index)) && get_char(get_next_str(index)) == 'x') insert_after(str, index, '*');
 
-        else if(index->previous == NULL) {
-            if(index->character == '-' && isdigit(index->next->character)) {
-                index->character = '_';
+        else if(get_prev_str(index) == NULL) {
+            if(get_char(index) == '-' && isdigit(get_char(get_next_str(index)))) {
+                set_char(index, '_');
             }
-            if(index->character == '-' && index->next->character == 'x') {
-                index->character = '_';
+            if(get_char(index) == '-' && get_char(get_next_str(index)) == 'x') {
+                set_char(index, '_');
             }
-        } else if(index->previous != NULL) {
-            if(index->previous->character == '[' && index->character == '-' && isdigit(index->next->character)) {
-                index->character = '_';
+        } else if(get_prev_str(index) != NULL) {
+            if(get_char(get_prev_str(index)) == '[' && get_char(index) == '-' && isdigit(get_char(get_next_str(index)))) {
+                set_char(index, '_');
             }
-            if(index->previous->character == '[' && index->character == '-' && index->next->character == 'x') {
-                index->character = '_';
+            if(get_char(get_prev_str(index)) == '[' && get_char(index) == '-' && get_char(get_next_str(index)) == 'x') {
+                set_char(index, '_');
             }
         }
 
-        index = index->next;
+        to_next_list(&index);
     }
     return 0;
 }
 
 int splice(string* str) {
-    c_node* block_start = str->head;
-    c_node* block_end = str->head;
+    c_node* block_start = get_head_str(str);
+    c_node* block_end = get_head_str(str);
     
     
     while(block_end != NULL) {
-        if(block_start->character == '(' || block_start->character == ')' || block_start->character == '[' || block_start->character == ']') {
-            block_start = block_start->next;
+        if(get_char(block_start) == '(' || get_char(block_start) == ')' || get_char(block_start) == '[' || get_char(block_start) == ']') {
+            to_next_list(&block_start);
             block_end = block_start;
-        } else if(isdigit(block_start->character)) {
+        } else if(isdigit(get_char(block_start))) {
             while(1) {
-                if(block_end->next == NULL) break;
-                if(!isdigit(block_end->next->character)) break;
-                block_end = block_end->next;
+                if(get_next_str(block_end) == NULL) break;
+                if(!isdigit(get_char(get_next_str(block_end)))) break;
+                to_next_list(block_end);
             }
             insert_before(str, block_start, '(');
             insert_after(str, block_end, ')');
-            block_end = block_end->next;
+            to_next_list(&block_end);
             block_start = block_end;
-        } else if(block_start->character == '_' && isdigit(block_start->next->character)) {
-            block_end = block_end->next;
+        } else if(get_char(block_start) == '_' && isdigit(get_char(get_next_str(block_start)))) {
+            to_next_list(&block_end);
             while(1) {
-                if(block_end->next == NULL) break;
-                if(!isdigit(block_end->next->character)) break;
-                block_end = block_end->next;
+                if(get_next_str(block_end) == NULL) break;
+                if(!isdigit(get_char(get_next_str(block_end)))) break;
+                to_next_list(&block_end);
             }
             insert_before(str, block_start, '(');
             insert_after(str, block_end, ')');
-            block_end = block_end->next;
+            to_next_list(&block_end);
             block_start = block_end;
-        } else if(block_start->character == '_' && block_start->next->character == 'x') {
-            block_end = block_end->next;
+        } else if(get_char(block_start) == '_' && get_char(get_next_str(block_start)) == 'x') {
+            to_next_list(&block_end);
             insert_before(str, block_start, '(');
             insert_after(str, block_end, ')');
-            block_end = block_end->next;
+            to_next_list(&block_end);
             block_start = block_end;
-        } else if(block_start->character == 'x') {
+        } else if(get_char(block_start) == 'x') {
             insert_before(str, block_start, '(');
             insert_after(str, block_end, ')');
-            block_end = block_end->next;
+            to_next_list(&block_end);
             block_start = block_end;
-        } else if(is_operator(block_start->character)) {
-            block_start = block_start->next;
+        } else if(is_operator(get_char(block_start))) {
+            to_next_list(&block_start);
             block_end = block_start;
         }
     }
 
-    c_node* index = str->head;
+    c_node* index = get_head_str(str);
     int count = 0;
     do {
-        if(index->character == '(') count++;
-        if(index->character == ')') count--;
-        if(index->character == '[') count++;
-        if(index->character == ']') count--;
-        index = index->next;
+        if(get_char(index) == '(') count++;
+        if(get_char(index) == ')') count--;
+        if(get_char(index) == '[') count++;
+        if(get_char(index) == ']') count--;
+        to_next_list(&index);
     } while (count != 0);
 
     if(index != NULL) {
@@ -127,11 +127,11 @@ int move_to_next_block(c_node** index) {
     int count = 0;
 
     do {
-        (*index) = (*index)->next;
+        to_next_list(index);
 
-        if((*index)->character == '(' || (*index)->character == '[') {
+        if(get_char(*index) == '(' || get_char(*index) == '[') {
             count++;
-        } else if((*index)->character == ')' || (*index)->character == ']') {
+        } else if(get_char(*index) == ')' || get_char(*index) == ']') {
             count--;
         }
     } while (count != 0);
@@ -143,11 +143,11 @@ int move_to_previous_block(c_node** index) {
     int count = 0;
 
     do {
-        (*index) = (*index)->previous;
+        to_prev_list(index);
 
-        if((*index)->character == '(' || (*index)->character == '[') {
+        if(get_char(*index) == '(' || get_char(*index) == '[') {
             count++;
-        } else if((*index)->character == ')' || (*index)->character == ']') {
+        } else if(get_char(*index) == ')' || get_char(*index) == ']') {
             count--;
         }
     } while (count != 0);
@@ -157,20 +157,20 @@ int move_to_previous_block(c_node** index) {
 
 int check_left_op(c_node* index, c_node* block_limit) {
     while(index != block_limit) {
-        if(is_operator(index->character)) {
+        if(is_operator(get_char(index))) {
             return true;
         }
-        index = index->previous;
+        to_prev_list(&index);
     }
     return false;
 }
 
 int check_right_op(c_node* index, c_node* block_limit) {
     while(index != block_limit) {
-        if(is_operator(index->character)) {
+        if(is_operator(get_char(index))) {
             return true;
         }
-        index = index->next;
+        to_next_list(&index);
     }
     return false;
 }
@@ -182,12 +182,12 @@ int group(c_node* block_start, c_node* block_end, string* str, bool should_resta
         if(should_restart == true) {
             index = block_start;
             move_to_next_block(&index);
-            index = index->next;
+            to_next_list(&index);
         }
 
-        c_node* l_block_end = index->previous;
+        c_node* l_block_end = get_prev_str(index);
         c_node* l_block_start = index;
-        c_node* r_block_start = index->next;
+        c_node* r_block_start = get_next_str(index);
         c_node* r_block_end = index;
         move_to_previous_block(&l_block_start);
         move_to_next_block(&r_block_end);
@@ -200,23 +200,23 @@ int group(c_node* block_start, c_node* block_end, string* str, bool should_resta
             insert_after(str, r_block_end, ')');
             group(block_start, block_end, str, true, index);
         } else {
-            if(r_block_end->next->character == '+' || r_block_end->next->character == '-') {
+            if(get_char(get_next_str(r_block_end)) == '+' || get_char(get_next_str(r_block_end)) == '-') {
                 insert_before(str, l_block_start, '(');
                 insert_after(str, r_block_end, ')');
                 group(block_start, block_end, str, true, index);
-            } else if(r_block_end->next->character == '*' || r_block_end->next->character == '/') {
-                if(index->character == '^' || index->character == '+' || index->character == '-') {
+            } else if(get_char(get_next_str(r_block_end)) == '*' || get_char(get_next_str(r_block_end)) == '/') {
+                if(get_char(index) == '^' || get_char(index) == '+' || get_char(index) == '-') {
                     move_to_next_block(&index);
-                    index = index->next;
+                    to_next_list(index);
                     group(block_start, block_end, str, false, index);
-                } else if(index->character == '*' || index->character == '/') {
+                } else if(get_char(index) == '*' || get_char(index) == '/') {
                     insert_before(str, l_block_start, '(');
                     insert_after(str, r_block_end, ')');
                     group(block_start, block_end, str, true, index);
                 }
-            } else if(r_block_end->next->character == '^') {
+            } else if(get_char(get_next_str(r_block_end)) == '^') {
                 move_to_next_block(&index);
-                index = index->next;
+                to_next_list(index);
                 group(block_start, block_end, str, false, index);
             }
         }
@@ -225,130 +225,109 @@ int group(c_node* block_start, c_node* block_end, string* str, bool should_resta
 }
 
 int group_string(string* str) {
-    group(str->head, str->tail, str, true, str->head);
+    group(get_head_str(str), get_tail_str(str), str, true, get_head_str(str));
     return 0;
 }
 
 int load_tree(tree* out_tree, string* str) {
-    load_tree_block(str->head, str->tail, out_tree->tree_head, out_tree, str);
+    load_tree_block(get_head_str(str), get_tail_str(str), get_head_tree(out_tree), out_tree, str);
     return 0;
 }
 
 int contract(string* str) {
-    c_node* index = str->head;
+    c_node* index = get_head_str(str);
 
-    while(index->next != NULL) {
-        if(index->next != NULL) {
-            if(index->next->next != NULL) {
-                if(((isdigit(index->character)) || (index->character == 'x')) && (index->next->character == '*') && (index->next->next->character == '(')) {
-                    c_node* t = index->next;
-                    index->next->next->previous = index;
-                    index->next = index->next->next;
+    while(get_next_str(index) != NULL) {
+        if(get_next_str(index) != NULL) {
+            if(get_next_str(get_next_str(index)) != NULL) {
+                if(((isdigit(get_char(index))) || (get_char(index) == 'x')) && (get_char(get_next_str(index)) == '*') && (get_char(get_next_str(get_next_str(index))) == '(')) {
+                    c_node* t = get_next_str(index);
+                    c_node* t_1 = get_prev_str(get_next_str(get_next_str(index)));
+                    set_c_node(&t_1, index);
+                    c_node* t_1 = get_next_str(index);
+                    set_c_node(&t_1, get_next_str(get_next_str(index)));
                     free(t);
                 }
 
-                if((index->character == ')') && ((isdigit(index->next->next->character)) || (index->next->next->character == 'x')) && (index->next->character == '*')) {
-                    c_node* t = index->next;
-                    index->next->next->previous = index;
-                    index->next = index->next->next;
+                if((get_char(index) == ')') && ((isdigit(get_char(get_next_str(get_next_str(index))))) || (get_char(get_next_str(get_next_str(index))) == 'x')) && (get_char(get_next_str(index)) == '*')) {
+                    c_node* t = get_next_str(index);
+                    c_node* t_1 = get_prev_str(get_next_str(get_next_str(index)));
+                    set_c_node(&t_1, index);
+                    c_node* t_1 = get_next_str(index);
+                    set_c_node(&t_1, get_next_str(get_next_str(index)));
                     free(t);
                 }
 
-                if((index->character == ')') && (index->next->character == '*') && (index->next->next->character == '(')) {
-                    c_node* t = index->next;
-                    index->next->next->previous = index;
-                    index->next = index->next->next;
+                if((get_char(index) == ')') && (get_char(get_next_str(index)) == '*') && (get_char(get_next_str(get_next_str(index))) == '(')) {
+                    c_node* t = get_next_str(index);
+                    c_node* t_1 = get_prev_str(get_next_str(get_next_str(index)));
+                    set_c_node(&t_1, index);
+                    c_node* t_1 = get_next_str(index);
+                    set_c_node(&t_1, get_next_str(get_next_str(index)));
                     free(t);
                 }
 
-                if((isdigit(index->character)) && (index->next->character == '*') && (index->next->next->character == 'x')) {
-                    c_node* t = index->next;
-                    index->next->next->previous = index;
-                    index->next = index->next->next;
+                if((isdigit(get_char(index))) && (get_char(get_next_str(index)) == '*') && (get_char(get_next_str(get_next_str(index))) == 'x')) {
+                    c_node* t = get_next_str(index);
+                    c_node* t_1 = get_prev_str(get_next_str(get_next_str(index)));
+                    set_c_node(&t_1, index);
+                    c_node* t_1 = get_next_str(index);
+                    set_c_node(&t_1, get_next_str(get_next_str(index)));
                     free(t);
                 }
             }
         }
-        index = index->next;
+        to_next_list(&index);
     }
 
-    return 0;
-}
-
-int one_mult_delete(string* string) {
-    c_node* index = string->head;
-    
-    while(1) {
-        do {
-            index = index->next;
-            if(index == NULL) goto cycle_exit;
-        } while(index->character != '*');
-
-        c_node* l_index = index;
-        c_node* r_index = index;
-
-        if(index->next->next->character == '1') {
-            r_index = index->next->next->next;
-            l_index->previous->next = r_index->next;
-            r_index->next->previous = l_index->previous;
-
-            do {
-                c_node* t = l_index;
-                l_index = l_index->next;
-                free(t);
-            } while(l_index != r_index);
-        }
-        index = r_index;
-    }
-    cycle_exit:
     return 0;
 }
 
 int par_check(string* string) {
-    c_node* l_index = string->head;
-    c_node* r_index = string->tail;
+    c_node* l_index = get_head_str(string);
+    c_node* r_index = get_tail_str(string);
 
     if(!is_leaf(l_index, r_index)) {
-        r_index = string->head;
+        r_index = get_head_str(string);
         while(l_index != NULL) {
-            while(l_index->character != '[') {
-                l_index = l_index->next;
+            while(get_char(l_index) != '[') {
+                to_next_list(&l_index);
                 if(l_index == NULL) goto cycle_exit;
             }
             r_index = l_index;
             int count = 0;
 
             do {
-                if(r_index->character == '(' || r_index->character == '[') {
+                if(get_char(r_index) == '(' || get_char(r_index) == '[') {
                     count++;
-                } else if(r_index->character == ')' || r_index->character == ']') {
+                } else if(get_char(r_index) == ')' || get_char(r_index) == ']') {
                     count--;
                 }
                 if(count != 0)
-                    r_index = r_index->next;
+                    to_next_list(&r_index);
             } while (count != 0);
 
             cycle_start:
 
-            if(l_index->next->character == '[' && r_index->previous->character == ']') {
+            if(get_char(get_next_str(l_index)) == '[' && get_char(get_prev_str(r_index)) == ']') {
                 c_node* t_index = l_index;
                 count = 0;
                 move_to_next_block(&t_index);
-                t_index = t_index->next;
+                to_next_list(&t_index);
 
                 if(t_index == r_index) {
-                    c_node* c = l_index->next;
-                    l_index->next = l_index->next->next;
-                    l_index->next->previous = l_index;
+                    c_node* c = get_next_str(l_index);
+                    set_c_node(get_next_str(l_index), get_next_str(get_next_str(l_index)));
+                    set_c_node(get_prev_str(get_next_str(l_index)), l_index);
                     free(c);
-                    c = r_index->previous;
-                    r_index->previous = r_index->previous->previous;
-                    r_index->previous->next = r_index;
+                    c = get_prev_str(r_index);
+                    set_c_node(get_prev_str(r_index), get_prev_str(get_prev_str(r_index)));
+                    set_c_node(get_next_str(get_prev_str(r_index)), r_index);
                     free(c);
                     goto cycle_start;
                 }
             }
-            l_index = l_index->next;
+            to_next_list(&l_index);
         }
     }
     cycle_exit:
@@ -356,133 +335,133 @@ int par_check(string* string) {
 }
 
 int mult_delete(string* string) {
-    c_node* index = string->head;
+    c_node* index = get_head_str(string);
     while(true) {
         c_node* tl_index = NULL;
         c_node* tr_index = NULL;
         
         if(index == NULL) goto cycle_exit;
         do {
-            index = index->next;
+            to_next_list(&index);
             if(index == NULL) goto cycle_exit;
-        } while(!is_operator(index->character));
+        } while(!is_operator(get_char(index)));
 
         c_node* l_index = index;
         c_node* r_index = index;
 
-        if(index->character == '*') {
-            if(index->previous->character == '0' && !isdigit(index->previous->previous->character)) {
-                l_index = l_index->previous;
-                if(r_index->next->character == '[') {
+        if(get_char(index) == '*') {
+            if(get_char(get_prev_str(index)) == '0' && !isdigit(get_char(get_prev_str(get_prev_str(index))))) {
+                to_prev_list(&l_index);
+                if(get_char(get_next_str(r_index)) == '[') {
                     move_to_next_block(&r_index);
                 } else {
                     do {
-                        r_index = r_index->next;
-                    } while(!is_operator(r_index->character) && r_index->character != ']');
-                    r_index = r_index->previous;
+                        to_next_list(&r_index);
+                    } while(!is_operator(get_char(r_index)) && get_char(r_index) != ']');
+                    to_prev_list(&r_index);
                 }
-                if(r_index->next->character == '+' || r_index->next->character == '-') {
-                    r_index = r_index->next;
+                if(get_char(get_next_str(r_index)) == '+' || get_char(get_next_str(r_index)) == '-') {
+                    to_next_list(&r_index);
                 }
-                c_node* tl_index = l_index->previous;
-                c_node* tr_index = r_index->next;
+                c_node* tl_index = get_prev_str(l_index);
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 check_limits(tl_index, tr_index, string);
                 mult_delete_r(string, tr_index);
                 return true;
-            } else if(index->previous->character == ']' && index->previous->previous->character == '0' && index->previous->previous->previous->character == '[') {
-                l_index = index->previous->previous->previous;
-                if(r_index->next->character == '[') {
+            } else if(get_char(get_prev_str(index)) == ']' && get_char(get_prev_str(get_prev_str(index))) == '0' && get_char(get_prev_str(get_prev_str(get_prev_str(index)))) == '[') {
+                l_index = get_prev_str(get_prev_str(get_prev_str(index)));
+                if(get_char(get_next_str(r_index)) == '[') {
                     move_to_next_block(&r_index);
                 } else {
                     do {
-                        r_index = r_index->next;
-                    } while(!is_operator(r_index->character) && r_index->character != ']');
-                    r_index = r_index->previous;
+                        to_next_list(&r_index);
+                    } while(!is_operator(get_char(r_index)) && get_char(r_index) != ']');
+                    to_prev_list(&r_index);
                 }
-                if(r_index->next->character == '+' || r_index->next->character == '-') {
-                    r_index = r_index->next;
+                if(get_char(get_next_str(r_index)) == '+' || get_char(get_next_str(r_index)) == '-') {
+                    to_next_list(&r_index);
                 }
-                c_node* tl_index = l_index->previous;
-                c_node* tr_index = r_index->next;
+                c_node* tl_index = get_prev_str(l_index);
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 check_limits(tl_index, tr_index, string);
                 mult_delete_r(string, tr_index);
                 return true;
-            } else if(index->next->character == '[' && index->next->next->character == '0' && index->next->next->next->character == ']') {
-                r_index = index->next->next->next;
-                if(l_index->previous->character == ']') {
+            } else if(get_char(get_next_str(index)) == '[' && get_char(get_next_str(get_next_str(index))) == '0' && get_char(get_next_str(get_next_str(get_next_str(index)))) == ']') {
+                r_index = get_next_str(get_next_str(get_next_str(index)));
+                if(get_char(get_prev_str(l_index)) == ']') {
                     move_to_previous_block(&l_index);
                 } else {
                     do {
-                        l_index = l_index->previous;
-                    } while(!is_operator(l_index->character) && l_index->character != '[');
-                    l_index = l_index->next;
+                        to_prev_list(&l_index);
+                    } while(!is_operator(get_char(l_index)) && get_char(l_index) != '[');
+                    to_next_list(&l_index);
                 }
-                if(l_index->previous->character == '+' || l_index->previous->character == '-') {
-                    l_index = l_index->previous;
+                if(get_char(get_prev_str(l_index)) == '+' || get_char(get_prev_str(l_index)) == '-') {
+                    to_prev_list(&l_index);
                 }
-                c_node* tl_index = l_index->previous;
-                c_node* tr_index = r_index->next;
+                c_node* tl_index = get_prev_str(l_index);
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 check_limits(tl_index, tr_index, string);
                 mult_delete_r(string, tr_index);
                 return true;
-            } else if(index->next->character == '0' && !isdigit(index->next->next->character)) {
-                r_index = index->next;
-                if(l_index->previous->character == ']') {
+            } else if(get_char(get_next_str(index)) == '0' && !isdigit(get_char(get_next_str(get_next_str(index))))) {
+                r_index = get_next_str(index);
+                if(get_char(get_prev_str(l_index)) == ']') {
                     move_to_previous_block(&l_index);
                 } else {
                     do {
-                        l_index = l_index->previous;
-                    } while(!is_operator(l_index->character) && l_index->character != '[');
-                    l_index = l_index->next;
+                        to_prev_list(&l_index);
+                    } while(!is_operator(get_char(l_index)) && get_char(l_index) != '[');
+                    to_next_list(&l_index);
                 }
-                if(l_index->previous->character == '+' || l_index->previous->character == '-') {
-                    l_index = l_index->previous;
+                if(get_char(get_prev_str(l_index)) == '+' || get_char(get_prev_str(l_index)) == '-') {
+                    to_prev_list(&l_index);
                 }
-                c_node* tl_index = l_index->previous;
-                c_node* tr_index = r_index->next;
+                c_node* tl_index = get_prev_str(l_index);
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 check_limits(tl_index, tr_index, string);
                 mult_delete_r(string, tr_index);
                 return true;
             }
-        } else if(index->character == '+' || index->character == '-') {
-            if(index->previous->character == '0') {
-                l_index = l_index->previous;
-                c_node* tr_index = r_index->next;
+        } else if(get_char(index) == '+' || get_char(index) == '-') {
+            if(get_char(get_prev_str(index)) == '0') {
+                l_index = get_prev_str(l_index);
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 return true;
-            } else if(index->previous->character == ']' && index->previous->previous->character == '0' && index->previous->previous->previous->character == '[') {
-                l_index = index->previous->previous->previous;
-                c_node* tr_index = r_index->next;
+            } else if(get_char(get_prev_str(index)) == ']' && get_char(get_prev_str(get_prev_str(index))) == '0' && get_char(get_prev_str(get_prev_str(get_prev_str(index)))) == '[') {
+                l_index = get_prev_str(get_prev_str(get_prev_str(l_index)));
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 return true;
-            } else if(index->next->character == '0') {
-                r_index = r_index->next;
-                c_node* tr_index = r_index->next;
+            } else if(get_char(get_next_str(index)) == '0') {
+                r_index = get_next_str(r_index);
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 return true;
-            } else if(index->next->character == '[' && index->next->next->character == '0' && index->next->next->next->character == ']') {
-                r_index = r_index->next->next->next;
-                c_node* tr_index = r_index->next;
+            } else if(get_char(get_next_str(index)) == '[' && get_char(get_next_str(get_next_str(index))) == '0' && get_char(get_next_str(get_next_str(get_next_str(index)))) == ']') {
+                r_index = get_next_str(get_next_str(get_next_str(r_index)));
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 return true;
             }
-        } else if(index->character == '^') {
-            if(index->next->character == '1' && !isdigit(index->next->next->character)) {
-                r_index = index->next;
+        } else if(get_char(index) == '^') {
+            if(get_char(get_next_str(index)) == '1' && !isdigit(get_char(get_next_str(get_next_str(index))))) {
+                r_index = get_next_str(index);
                 l_index = index;
-                c_node* tr_index = r_index->next;
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 return true;
@@ -500,126 +479,126 @@ int mult_delete_r(string* string, c_node* index) {
         
         if(index == NULL) goto cycle_exit;
         do {
-            index = index->next;
+            to_next_list(&index);
             if(index == NULL) goto cycle_exit;
-        } while(!is_operator(index->character));
+        } while(!is_operator(get_char(index)));
 
         c_node* l_index = index;
         c_node* r_index = index;
 
-        if(index->character == '*') {
-            if(index->previous->character == '0' && !isdigit(index->previous->previous->character)) {
-                l_index = l_index->previous;
-                if(r_index->next->character == '[') {
+        if(get_char(index) == '*') {
+            if(get_char(get_prev_str(index)) == '0' && !isdigit(get_char(get_prev_str(get_prev_str(index))))) {
+                to_prev_list(&l_index);
+                if(get_char(get_next_str(r_index)) == '[') {
                     move_to_next_block(&r_index);
                 } else {
                     do {
-                        r_index = r_index->next;
-                    } while(!is_operator(r_index->character) && r_index->character != ']');
-                    r_index = r_index->previous;
+                        to_next_list(&r_index);
+                    } while(!is_operator(get_char(r_index)) && get_char(r_index) != ']');
+                    to_prev_list(&r_index);
                 }
-                if(r_index->next->character == '+' || r_index->next->character == '-') {
-                    r_index = r_index->next;
+                if(get_char(get_next_str(r_index)) == '+' || get_char(get_next_str(r_index)) == '-') {
+                    to_next_list(&r_index);
                 }
-                c_node* tl_index = l_index->previous;
-                c_node* tr_index = r_index->next;
+                c_node* tl_index = get_prev_str(l_index);
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 check_limits(tl_index, tr_index, string);
                 mult_delete_r(string, tr_index);
                 return true;
-            } else if(index->previous->character == ']' && index->previous->previous->character == '0' && index->previous->previous->previous->character == '[') {
-                l_index = index->previous->previous->previous;
-                if(r_index->next->character == '[') {
+            } else if(get_char(get_prev_str(index)) == ']' && get_char(get_prev_str(get_prev_str(index))) == '0' && get_char(get_prev_str(get_prev_str(get_prev_str(index)))) == '[') {
+                l_index = get_prev_str(get_prev_str(get_prev_str(index)));
+                if(get_char(get_next_str(r_index)) == '[') {
                     move_to_next_block(&r_index);
                 } else {
                     do {
-                        r_index = r_index->next;
-                    } while(!is_operator(r_index->character) && r_index->character != ']');
-                    r_index = r_index->previous;
+                        to_next_list(&r_index);
+                    } while(!is_operator(get_char(r_index)) && get_char(r_index) != ']');
+                    to_prev_list(&r_index);
                 }
-                if(r_index->next->character == '+' || r_index->next->character == '-') {
-                    r_index = r_index->next;
+                if(get_char(get_next_str(r_index)) == '+' || get_char(get_next_str(r_index)) == '-') {
+                    to_next_list(&r_index);
                 }
-                c_node* tl_index = l_index->previous;
-                c_node* tr_index = r_index->next;
+                c_node* tl_index = get_prev_str(l_index);
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 check_limits(tl_index, tr_index, string);
                 mult_delete_r(string, tr_index);
                 return true;
-            } else if(index->next->character == '[' && index->next->next->character == '0' && index->next->next->next->character == ']') {
-                r_index = index->next->next->next;
-                if(l_index->previous->character == ']') {
+            } else if(get_char(get_next_str(index)) == '[' && get_char(get_next_str(get_next_str(index))) == '0' && get_char(get_next_str(get_next_str(get_next_str(index)))) == ']') {
+                r_index = get_next_str(get_next_str(get_next_str(index)));
+                if(get_char(get_prev_str(l_index)) == ']') {
                     move_to_previous_block(&l_index);
                 } else {
                     do {
-                        l_index = l_index->previous;
-                    } while(!is_operator(l_index->character) && l_index->character != '[');
-                    l_index = l_index->next;
+                        to_prev_list(&l_index);
+                    } while(!is_operator(get_char(l_index)) && get_char(l_index) != '[');
+                    to_next_list(&l_index);
                 }
-                if(l_index->previous->character == '+' || l_index->previous->character == '-') {
-                    l_index = l_index->previous;
+                if(get_char(get_prev_str(l_index)) == '+' || get_char(get_prev_str(l_index)) == '-') {
+                    to_prev_list(&l_index);
                 }
-                c_node* tl_index = l_index->previous;
-                c_node* tr_index = r_index->next;
+                c_node* tl_index = get_prev_str(l_index);
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 check_limits(tl_index, tr_index, string);
                 mult_delete_r(string, tr_index);
                 return true;
-            } else if(index->next->character == '0' && !isdigit(index->next->next->character)) {
-                r_index = index->next;
-                if(l_index->previous->character == ']') {
+            } else if(get_char(get_next_str(index)) == '0' && !isdigit(get_char(get_next_str(get_next_str(index))))) {
+                r_index = get_next_str(index);
+                if(get_char(get_prev_str(l_index)) == ']') {
                     move_to_previous_block(&l_index);
                 } else {
                     do {
-                        l_index = l_index->previous;
-                    } while(!is_operator(l_index->character) && l_index->character != '[');
-                    l_index = l_index->next;
+                        to_prev_list(&l_index);
+                    } while(!is_operator(get_char(l_index)) && get_char(l_index) != '[');
+                    to_next_list(&l_index);
                 }
-                if(l_index->previous->character == '+' || l_index->previous->character == '-') {
-                    l_index = l_index->previous;
+                if(get_char(get_prev_str(l_index)) == '+' || get_char(get_prev_str(l_index)) == '-') {
+                    to_prev_list(&l_index);
                 }
-                c_node* tl_index = l_index->previous;
-                c_node* tr_index = r_index->next;
+                c_node* tl_index = get_prev_str(l_index);
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 check_limits(tl_index, tr_index, string);
                 mult_delete_r(string, tr_index);
                 return true;
             }
-        } else if(index->character == '+' || index->character == '-') {
-            if(index->previous->character == '0') {
-                l_index = l_index->previous;
-                c_node* tr_index = r_index->next;
+        } else if(get_char(index) == '+' || get_char(index) == '-') {
+            if(get_char(get_prev_str(index)) == '0') {
+                l_index = get_prev_str(l_index);
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 return true;
-            } else if(index->previous->character == ']' && index->previous->previous->character == '0' && index->previous->previous->previous->character == '[') {
-                l_index = index->previous->previous->previous;
-                c_node* tr_index = r_index->next;
+            } else if(get_char(get_prev_str(index)) == ']' && get_char(get_prev_str(get_prev_str(index))) == '0' && get_char(get_prev_str(get_prev_str(get_prev_str(index)))) == '[') {
+                l_index = get_prev_str(get_prev_str(get_prev_str(l_index)));
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 return true;
-            } else if(index->next->character == '0') {
-                r_index = r_index->next;
-                c_node* tr_index = r_index->next;
+            } else if(get_char(get_next_str(index)) == '0') {
+                r_index = get_next_str(r_index);
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 return true;
-            } else if(index->next->character == '[' && index->next->next->character == '0' && index->next->next->next->character == ']') {
-                r_index = r_index->next->next->next;
-                c_node* tr_index = r_index->next;
+            } else if(get_char(get_next_str(index)) == '[' && get_char(get_next_str(get_next_str(index))) == '0' && get_char(get_next_str(get_next_str(get_next_str(index)))) == ']') {
+                r_index = get_next_str(get_next_str(get_next_str(r_index)));
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 return true;
             }
-        } else if(index->character == '^') {
-            if(index->next->character == '1' && !isdigit(index->next->next->character)) {
-                r_index = index->next;
+        } else if(get_char(index) == '^') {
+            if(get_char(get_next_str(index)) == '1' && !isdigit(get_char(get_next_str(get_next_str(index))))) {
+                r_index = get_next_str(index);
                 l_index = index;
-                c_node* tr_index = r_index->next;
+                c_node* tr_index = get_next_str(r_index);
                 delete_between(string, l_index, r_index);
                 index = tr_index;
                 return true;
@@ -632,11 +611,11 @@ int mult_delete_r(string* string, c_node* index) {
 
 int check_limits(c_node* tl_index, c_node* tr_index, string* string) {
     if(tl_index != NULL && tr_index != NULL) {
-        if(tl_index->character == '[' && tr_index->character == ']') {
-            c_node* t_index = tr_index->next;
+        if(get_char(tl_index) == '[' && get_char(tr_index) == ']') {
+            c_node* t_index = get_next_str(tr_index);
             delete_between(string, tl_index, tr_index);
-            if(string->head == string->tail) {
-                string->head->character = '0';
+            if(get_head_str(string) == get_tail_str(string)) {
+                set_char(get_head_str(string), '0');
             } else {
                 insert_before(string, t_index, '0');
             }

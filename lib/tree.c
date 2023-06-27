@@ -17,6 +17,10 @@
 #define POW 5
 #define VAR 6
 
+tree_node* get_head_tree(tree* in_tree) {
+    return in_tree->tree_head;
+}
+
 int inorder_s(tree_node* node, string* x) {
     if (node == NULL) return 0;
     inorder_s(node->l_child, x);

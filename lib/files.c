@@ -20,21 +20,20 @@ int save_mem(memory mem) {
         string* str = (string*)malloc(sizeof(string));
         create_string(str);
 
-        inorder_i(mem_index->data->tree_head, str);
-        str->head->previous = NULL;
-        str->tail->next = NULL;
+        inorder_i(get_tree_head_from_mem_index(mem_index), str);
+        fix(str);
         modify(str, '[', '(');
         modify(str, ']', ')');
         delete(str, ' ');
 
-        c_node* list_index = str->head;
+        c_node* list_index = get_head_str(str);
         while(list_index != NULL) {
-            putc(list_index->character, file);
-            list_index = list_index->next;
+            putc(get_char(list_index), file);
+            to_next_list(list_index);
         }
         putc('\n', file);
 
-        mem_index = mem_index->next;
+        to_next_mem(&mem_index);
         delete_string(str);
     }
 
@@ -77,8 +76,7 @@ int load_mem(memory* mem) {
             tail_string_insert(str, c);
         } while (c != '\n' || c != EOF);
 
-        str->head->previous = NULL;
-        str->tail->next = NULL;
+        fix(str);
         modify(str, '[', '(');
         modify(str, ']', ')');
         delete(str, ' ');

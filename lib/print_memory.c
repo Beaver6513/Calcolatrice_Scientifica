@@ -19,7 +19,7 @@ void print_memory(memory* mem) {
         case 1:
             choice = -1;
             int mem_lenght = 1;
-            memory_node* index = mem->head;
+            memory_node* index = get_head_mem(mem);
             get_length(index, *mem, &mem_lenght);
             while(choice < 1 || choice > mem_lenght) {
                 system("clear");
@@ -31,7 +31,7 @@ void print_memory(memory* mem) {
                 scanf("%d", &choice);
             }
             printf("\n");
-            index = mem->head;
+            index = get_head_mem(mem);
             move_index(&index, choice);
             printf("Function :   ");
             print_tree(index);
@@ -40,7 +40,7 @@ void print_memory(memory* mem) {
             printf("\nPress enter to return to main menu...");
         break;
         case 2:
-            index = mem->head;
+            index = get_head_mem(mem);
             int count = 1;
             system("clear");
             while(index != NULL) {
@@ -48,7 +48,7 @@ void print_memory(memory* mem) {
                 printf("Function :   ");
                 print_tree(index);
                 printf("\n");
-                to_next(&index);
+                to_next_mem(&index);
                 count++;
             }
             while ((k = getchar()) != '\n' && k != EOF);

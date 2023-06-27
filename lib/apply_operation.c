@@ -34,7 +34,7 @@ void apply_operation(memory* mem) {
                 case 1:
                     choice = -1;
                     int mem_lenght = 1;
-                    memory_node* index = mem->head;
+                    memory_node* index = get_head_mem(mem);
                     get_length(index, *mem, &mem_lenght);
                     while(choice < 1 || choice > mem_lenght) {
                         system("clear");
@@ -45,7 +45,7 @@ void apply_operation(memory* mem) {
                         printf("Insert function index: ");
                         scanf("%d", &choice);
                     }
-                    index = mem->head;
+                    index = get_head_mem(mem);
                     move_index(&index, choice);
 
                     struct string* t_string = (struct string*)malloc(sizeof(struct string));
@@ -55,7 +55,7 @@ void apply_operation(memory* mem) {
                     tree* out_tree = (tree*)malloc(sizeof(tree));
                     create_tree(out_tree);
 
-                    inorder_i(get_parent(index), t_string);
+                    inorder_i(get_tree_head_from_mem_index(index), t_string);
                     fix(t_string);
                     modify(t_string, '[', '(');
                     modify(t_string, ']', ')');
@@ -112,13 +112,13 @@ void apply_operation(memory* mem) {
                     printf("\n\n");
                     fix(s_params);
 
-                    memory_node* mem_index = mem->head;
+                    memory_node* mem_index = get_head_mem(mem);
                     int func_found = 0;
                     int func_index = 1;
                     while (mem_index != NULL) {
                         struct string* t_list = (struct string*)malloc(sizeof(struct string));
                         create_string(t_list);
-                        inorder_i(get_parent(mem_index), t_list);
+                        inorder_i(get_tree_head_from_mem_index(mem_index), t_list);
                         modify(t_list, '(', '[');
                         modify(t_list, ')', ']');
                         contract(t_list);
@@ -130,7 +130,7 @@ void apply_operation(memory* mem) {
                             printf("\n");
                         }
 
-                        to_next(&mem_index);
+                        to_next_mem(&mem_index);
                         func_index++;
                         delete_string(t_list);
                     }
@@ -142,7 +142,7 @@ void apply_operation(memory* mem) {
 
                     choice = -1;
                     mem_lenght = 1;
-                    index = mem->head;
+                    index = get_head_mem(mem);
                     get_length(index, *mem, &mem_lenght);
                     while (choice < 1 || choice > mem_lenght) {
 
@@ -152,7 +152,7 @@ void apply_operation(memory* mem) {
                         printf("Insert function index: ");
                         scanf("%d", &choice);
                     }
-                    index = mem->head;
+                    index = get_head_mem(mem);
                     move_index(&index, choice);
 
                     struct string* t_string = (struct string*)malloc(sizeof(struct string));
@@ -162,7 +162,7 @@ void apply_operation(memory* mem) {
                     tree* out_tree = (tree*)malloc(sizeof(tree));
                     create_tree(out_tree);
 
-                    inorder_i(get_parent(index), t_string);
+                    inorder_i(get_tree_head_from_mem_index(index), t_string);
                     fix(t_string);
                     modify(t_string, '[', '(');
                     modify(t_string, ']', ')');
@@ -231,7 +231,7 @@ void apply_operation(memory* mem) {
                 case 1:
                     choice = -1;
                     int mem_lenght = 1;
-                    memory_node* index = mem->head;
+                    memory_node* index = get_head_mem(mem);
                     get_length(index, *mem, &mem_lenght);
                     while(choice < 1 || choice > mem_lenght) {
                         system("clear");
@@ -242,7 +242,7 @@ void apply_operation(memory* mem) {
                         printf("Insert function index: ");
                         scanf("%d", &choice);
                     }
-                    index = mem->head;
+                    index = get_head_mem(mem);
                     move_index(&index, choice);
                     printf("Insert x value: ");
 
@@ -253,7 +253,7 @@ void apply_operation(memory* mem) {
                     tree* t_tree = (tree*)malloc(sizeof(tree));
                     create_tree(t_tree);
 
-                    inorder_i(get_parent(index), t_string);
+                    inorder_i(get_tree_head_from_mem_index(index), t_string);
                     fix(t_string);
                     modify(t_string, '[', '(');
                     modify(t_string, ']', ')');
@@ -287,14 +287,14 @@ void apply_operation(memory* mem) {
                     printf("\n\n");
                     fix(s_params);
 
-                    memory_node* mem_index = mem->head;
+                    memory_node* mem_index = get_head_mem(mem);
                     int is_equal = 0;
                     int func_found = 0;
                     int func_index = 1;
                     while (mem_index != NULL) {
                         struct string* t_list = (struct string*)malloc(sizeof(struct string));
                         create_string(t_list);
-                        inorder_i(get_parent(mem_index), t_list);
+                        inorder_i(get_tree_head_from_mem_index(mem_index), t_list);
                         modify(t_list, '(', '[');
                         modify(t_list, ')', ']');
                         contract(t_list);
@@ -307,7 +307,7 @@ void apply_operation(memory* mem) {
                             printf("\n");
                         }
 
-                        to_next(&mem_index);
+                        to_next_mem(&mem_index);
                         func_index++;
                         delete_string(t_list);
                     }
@@ -320,7 +320,7 @@ void apply_operation(memory* mem) {
 
                     choice = -1;
                     mem_lenght = 1;
-                    index = mem->head;
+                    index = get_head_mem(mem);
                     get_length(index, *mem, &mem_lenght);
                     while (choice < 1 || choice > mem_lenght) {
 
@@ -330,7 +330,7 @@ void apply_operation(memory* mem) {
                         printf("Insert function index: ");
                         scanf("%d", &choice);
                     }
-                    index = mem->head;
+                    index = get_head_mem(mem);
                     move_index(&index, choice);
 
                     printf("Insert x value: ");
@@ -342,7 +342,7 @@ void apply_operation(memory* mem) {
                     tree* t_tree2 = (tree*)malloc(sizeof(tree));
                     create_tree(t_tree2);
 
-                    inorder_i(get_parent(index), t_string2);
+                    inorder_i(get_tree_head_from_mem_index(index), t_string2);
                     fix(t_string2);
                     modify(t_string2, '[', '(');
                     modify(t_string2, ']', ')');

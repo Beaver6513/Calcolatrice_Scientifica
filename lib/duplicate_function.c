@@ -8,7 +8,7 @@
 void duplicate_function(memory* mem) {
     int choice = -1;
     int mem_lenght = 1;
-    memory_node* index = mem->head;
+    memory_node* index = get_head_mem(mem);
     get_length(index, *mem, &mem_lenght);
     while(choice < 1 || choice > mem_lenght) {
         system("clear");
@@ -19,14 +19,14 @@ void duplicate_function(memory* mem) {
         printf("Insert the function index that you want to duplicate: ");
         scanf("%d", &choice);
     }
-    index = mem->head;
+    index = get_head_mem(mem);
     move_index(&index, choice);
 
     tree* function_2 = (tree*)malloc(sizeof(tree));
     create_tree(function_2);
     struct string* t_list = (struct string*)malloc(sizeof(struct string));
     create_string(t_list);
-    inorder_i(get_parent(index), t_list);
+    inorder_i(get_tree_head_from_mem_index(index), t_list);
     fix(t_list);
     splice(t_list);
     group_string(t_list);

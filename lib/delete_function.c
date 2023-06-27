@@ -21,7 +21,7 @@ void delete_function(memory* mem) {
         case 1:
             choice = -1;
             int mem_lenght = 1;
-            memory_node* index = mem->head;
+            memory_node* index = get_head_mem(mem);
             get_length(index, *mem, &mem_lenght);
             while(choice < 1 || choice > mem_lenght) {
                 system("clear");
@@ -32,7 +32,7 @@ void delete_function(memory* mem) {
                 printf("Insert function index: ");
                 scanf("%d", &choice);
             }
-            index = mem->head;
+            index = get_head_mem(mem);
             move_index(&index, choice);
 
             remove_mem_node(mem, index);
@@ -50,14 +50,14 @@ void delete_function(memory* mem) {
             printf("\n\n");
             fix(s_params);
 
-            memory_node* mem_index = mem->head;
+            memory_node* mem_index = get_head_mem(mem);
             int is_equal = 0;
             int func_found = 0;
             int func_index = 1;
             while (mem_index != NULL) {
                 struct string* t_list = (struct string*)malloc(sizeof(struct string));
                 create_string(t_list);
-                inorder_i(get_parent(mem_index), t_list);
+                inorder_i(get_tree_head_from_mem_index(mem_index), t_list);
                 modify(t_list, '(', '[');
                 modify(t_list, ')', ']');
                 modify(t_list, '-', '_');
@@ -71,7 +71,7 @@ void delete_function(memory* mem) {
                     printf("\n");
                 }
 
-                to_next(&mem_index);
+                to_next_mem(&mem_index);
                 func_index++;
                 delete_string(t_list);
             }
@@ -84,7 +84,7 @@ void delete_function(memory* mem) {
 
             choice = -1;
             mem_lenght = 1;
-            index = mem->head;
+            index = get_head_mem(mem);
             get_length(index, *mem, &mem_lenght);
             while (choice < 1 || choice > mem_lenght) {
 
@@ -94,7 +94,7 @@ void delete_function(memory* mem) {
                 printf("Insert function index: ");
                 scanf("%d", &choice);
             }
-            index = mem->head;
+            index = get_head_mem(mem);
             move_index(&index, choice);
 
             remove_mem_node(mem, index);

@@ -342,3 +342,41 @@ int fix(string* string) {
     string->tail->next = NULL;
     return 0;
 }
+
+c_node* get_head_str(string* str) {
+    return str->head;
+}
+
+c_node* get_tail_str(string* str) {
+    return str->tail;
+}
+
+void set_char(c_node* index, char key) {
+    index->character = key;
+}
+
+char get_char(c_node* index) {
+    return index->character;
+}
+
+void to_next_list(c_node** index) {
+    (*index) = (*index)->next;
+    return 0;
+}
+
+void to_prev_list(c_node** index) {
+    (*index) = (*index)->previous;
+    return 0;
+}
+
+c_node* get_next_str(c_node* index) {
+    return index->next;
+}
+
+c_node* get_prev_str(c_node* index) {
+    return index->previous;
+}
+
+void set_c_node(c_node** node, c_node* index) {
+    *node = index;
+}

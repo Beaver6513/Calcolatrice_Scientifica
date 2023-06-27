@@ -8,7 +8,7 @@ int create_memory(memory* mem) {
     return 0;
 }
 
-int to_next(memory_node** index) {
+int to_next_mem(memory_node** index) {
     (*index) = (*index)->next;
     return 0;
 }
@@ -18,6 +18,14 @@ int move_index(memory_node** index, int pos) {
         (*index) = (*index)->next;
     }
     return 0;
+}
+
+tree_node* get_tree_head_from_mem_index(memory_node* index) {
+    return index->data->tree_head;
+}
+
+tree* get_tree_from_mem_index(memory_node* index) {
+    return index->data;
 }
 
 int get_length(memory_node* index, memory mem, int* mem_length) {
@@ -86,4 +94,8 @@ int free_memory(memory* mem) {
         } while(j != NULL);
     }
     return 0;
+}
+
+memory_node* get_head_mem(memory* mem) {
+    return mem->head;
 }

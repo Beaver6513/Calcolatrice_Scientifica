@@ -46,3 +46,21 @@ int to_string(string* str, int n);
 int delete_between(string* string, c_node* block_start, c_node* block_end);
 
 int fix(string* string);
+
+c_node* get_head_str(string* str);
+
+c_node* get_tail_str(string* str);
+
+c_node* get_next_str(c_node* index);
+
+c_node* get_prev_str(c_node* index);
+
+void set_char(c_node* index, char key);
+
+char get_char(c_node* index);
+
+void to_next_list(c_node** index);
+
+void to_prev_list(c_node** index);
+
+void set_c_node(c_node** node, c_node* index);
