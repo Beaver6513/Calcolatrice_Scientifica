@@ -9,7 +9,7 @@
 int expand_string(string* str) {
     c_node* index = get_head_str(str);
 
-    while(get_next_str(str) != NULL) {
+    while(get_next_str(index) != NULL) {
         if((isdigit(get_char(index)) || get_char(index) == 'x') && get_char(get_next_str(index)) == '[') insert_after(str, index, '*');
 
         else if(get_char(index) == ']' && (isdigit(get_char(get_next_str(index))) || get_char(get_next_str(index)) == 'x')) insert_after(str, index, '*');
@@ -52,7 +52,7 @@ int splice(string* str) {
             while(1) {
                 if(get_next_str(block_end) == NULL) break;
                 if(!isdigit(get_char(get_next_str(block_end)))) break;
-                to_next_list(block_end);
+                to_next_list(&block_end);
             }
             insert_before(str, block_start, '(');
             insert_after(str, block_end, ')');
@@ -207,7 +207,7 @@ int group(c_node* block_start, c_node* block_end, string* str, bool should_resta
             } else if(get_char(get_next_str(r_block_end)) == '*' || get_char(get_next_str(r_block_end)) == '/') {
                 if(get_char(index) == '^' || get_char(index) == '+' || get_char(index) == '-') {
                     move_to_next_block(&index);
-                    to_next_list(index);
+                    to_next_list(&index);
                     group(block_start, block_end, str, false, index);
                 } else if(get_char(index) == '*' || get_char(index) == '/') {
                     insert_before(str, l_block_start, '(');
@@ -216,7 +216,7 @@ int group(c_node* block_start, c_node* block_end, string* str, bool should_resta
                 }
             } else if(get_char(get_next_str(r_block_end)) == '^') {
                 move_to_next_block(&index);
-                to_next_list(index);
+                to_next_list(&index);
                 group(block_start, block_end, str, false, index);
             }
         }
@@ -242,37 +242,33 @@ int contract(string* str) {
             if(get_next_str(get_next_str(index)) != NULL) {
                 if(((isdigit(get_char(index))) || (get_char(index) == 'x')) && (get_char(get_next_str(index)) == '*') && (get_char(get_next_str(get_next_str(index))) == '(')) {
                     c_node* t = get_next_str(index);
-                    c_node* t_1 = get_prev_str(get_next_str(get_next_str(index)));
-                    set_c_node(&t_1, index);
-                    c_node* t_1 = get_next_str(index);
-                    set_c_node(&t_1, get_next_str(get_next_str(index)));
+                    c_node* t_1 = get_next_str(get_next_str(index));
+                    set_c_node_prev(&t_1, index);
+                    set_c_node_next(&index, t_1);
                     free(t);
                 }
 
                 if((get_char(index) == ')') && ((isdigit(get_char(get_next_str(get_next_str(index))))) || (get_char(get_next_str(get_next_str(index))) == 'x')) && (get_char(get_next_str(index)) == '*')) {
                     c_node* t = get_next_str(index);
-                    c_node* t_1 = get_prev_str(get_next_str(get_next_str(index)));
-                    set_c_node(&t_1, index);
-                    c_node* t_1 = get_next_str(index);
-                    set_c_node(&t_1, get_next_str(get_next_str(index)));
+                    c_node* t_1 = get_next_str(get_next_str(index));
+                    set_c_node_prev(&t_1, index);
+                    set_c_node_next(&index, t_1);
                     free(t);
                 }
 
                 if((get_char(index) == ')') && (get_char(get_next_str(index)) == '*') && (get_char(get_next_str(get_next_str(index))) == '(')) {
                     c_node* t = get_next_str(index);
-                    c_node* t_1 = get_prev_str(get_next_str(get_next_str(index)));
-                    set_c_node(&t_1, index);
-                    c_node* t_1 = get_next_str(index);
-                    set_c_node(&t_1, get_next_str(get_next_str(index)));
+                    c_node* t_1 = get_next_str(get_next_str(index));
+                    set_c_node_prev(&t_1, index);
+                    set_c_node_next(&index, t_1);
                     free(t);
                 }
 
                 if((isdigit(get_char(index))) && (get_char(get_next_str(index)) == '*') && (get_char(get_next_str(get_next_str(index))) == 'x')) {
                     c_node* t = get_next_str(index);
-                    c_node* t_1 = get_prev_str(get_next_str(get_next_str(index)));
-                    set_c_node(&t_1, index);
-                    c_node* t_1 = get_next_str(index);
-                    set_c_node(&t_1, get_next_str(get_next_str(index)));
+                    c_node* t_1 = get_next_str(get_next_str(index));
+                    set_c_node_prev(&t_1, index);
+                    set_c_node_next(&index, t_1);
                     free(t);
                 }
             }
@@ -316,14 +312,16 @@ int par_check(string* string) {
                 to_next_list(&t_index);
 
                 if(t_index == r_index) {
+                    c_node* t = get_next_str(l_index);
+                    set_c_node_next(&l_index, get_next_str(get_next_str(l_index)));
                     c_node* c = get_next_str(l_index);
-                    set_c_node(get_next_str(l_index), get_next_str(get_next_str(l_index)));
-                    set_c_node(get_prev_str(get_next_str(l_index)), l_index);
-                    free(c);
+                    set_c_node_prev(&c, l_index);
+                    free(t);
+                    t = get_prev_str(r_index);
+                    set_c_node_prev(&r_index, get_prev_str(get_prev_str(r_index)));
                     c = get_prev_str(r_index);
-                    set_c_node(get_prev_str(r_index), get_prev_str(get_prev_str(r_index)));
-                    set_c_node(get_next_str(get_prev_str(r_index)), r_index);
-                    free(c);
+                    set_c_node_next(&c, r_index);
+                    free(t);
                     goto cycle_start;
                 }
             }

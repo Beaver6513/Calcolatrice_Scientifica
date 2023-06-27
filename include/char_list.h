@@ -68,3 +68,7 @@ void set_c_node(c_node** node, c_node* index);
 c_node* get_next_str_m(c_node* index, int i);
 
 c_node* get_prev_str_m(c_node* index, int i);
+
+void set_c_node_prev(c_node** node, c_node* index);
+
+void set_c_node_next(c_node** node, c_node* index);

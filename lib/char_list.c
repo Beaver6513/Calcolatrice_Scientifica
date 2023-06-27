@@ -358,12 +358,10 @@ char get_char(c_node* index) {
 
 void to_next_list(c_node** index) {
     (*index) = (*index)->next;
-    return 0;
 }
 
 void to_prev_list(c_node** index) {
     (*index) = (*index)->previous;
-    return 0;
 }
 
 c_node* get_next_str(c_node* index) {
@@ -390,4 +388,12 @@ c_node* get_prev_str_m(c_node* index, int i) {
 
 void set_c_node(c_node** node, c_node* index) {
     *node = index;
+}
+
+void set_c_node_prev(c_node** node, c_node* index) {
+    (*node)->previous = index;
+}
+
+void set_c_node_next(c_node** node, c_node* index) {
+    (*node)->next = index;
 }

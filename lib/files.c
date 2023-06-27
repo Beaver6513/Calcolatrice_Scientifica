@@ -29,7 +29,7 @@ int save_mem(memory mem) {
         c_node* list_index = get_head_str(str);
         while(list_index != NULL) {
             putc(get_char(list_index), file);
-            to_next_list(list_index);
+            to_next_list(&list_index);
         }
         putc('\n', file);
 
