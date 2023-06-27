@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
+#include <string.h>
 #include <ctype.h>
 
 #ifdef __linux__ 
@@ -264,20 +265,16 @@ int insert_after(string* str, c_node* index, char key) {
     return 0;
 }
 
-int insert_before_l(string* str, c_node* index, string* string) {
-    c_node* i = string->head;
-    while(index != NULL) {
-        insert_before(str, index, i->character);
-        i = i->next;
+int insert_before_l(string* str, c_node* index, char* t) {
+    for (int i = 0; i < strlen(t); i++) {
+        insert_before(str, index, t[i]);
     }
     return 0;
 }
 
-int insert_after_l(string* str, c_node* index, string* string) {
-    c_node* i = string->tail;
-    while(index != NULL) {
-        insert_after(str, index, i->character);
-        i = i->previous;
+int insert_after_l(string* str, c_node* index, char* t) {
+    for (int i = strlen(t) - 1; i > -1; i--) {
+        insert_after(str, index, t[i]);
     }
     return 0;
 }
@@ -375,6 +372,20 @@ c_node* get_next_str(c_node* index) {
 
 c_node* get_prev_str(c_node* index) {
     return index->previous;
+}
+
+c_node* get_next_str_m(c_node* index, int i) {
+    for(int j = i ; j > 0 ; j--) {
+        index = index->next;
+    }
+    return index;
+}
+
+c_node* get_prev_str_m(c_node* index, int i) {
+    for(int j = i ; j > 0 ; j--) {
+        index = index->previous;
+    }
+    return index;
 }
 
 void set_c_node(c_node** node, c_node* index) {

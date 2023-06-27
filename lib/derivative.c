@@ -2,6 +2,7 @@
 #include "char_list.h"
 #include "tree.h"
 #include "parser.h"
+#include "memory.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -20,538 +21,312 @@ int derive_node(tree_node* node, string* out_string, c_node* index) {
         index = get_head_str(out_string);
     }
 
-    if(node->data->head->character == '_') {
-        if(node->data->head->next->character == 'x' && index->character == '#') {
-            index->character = '1';
-            insert_before(out_string, index, '_');
-            insert_before(out_string, index->previous, '[');
+    if(get_char(get_head_cn_from_tree_node(node)) == '_') {
+        if(get_char(get_next_str(get_head_cn_from_tree_node(node))) == 'x' && get_char(index) == '#') {
+            set_char(index, '1');
+            insert_before_l(out_string, index, "[_");
             insert_after(out_string, index, ']');
-        } else if(node->data->head->next->character == 'x' && index->character == '@') {
-            index->character = 'x';
-            insert_before(out_string, index, '_');
-            insert_before(out_string, index->previous, '[');
+        } else if(get_char(get_next_str(get_head_cn_from_tree_node(node))) == 'x' && get_char(index) == '@') {
+            set_char(index, 'x');
+            insert_before_l(out_string, index, "[_");
             insert_after(out_string, index, ']');
-        } else if(isdigit(node->data->head->next->character) && index->character == '#') {
-            index->character = '0';
-        } else if(isdigit(node->data->head->next->character) && index->character == '@') {
-            index->character = '_';
+        } else if(isdigit(get_char(get_next_str(get_head_cn_from_tree_node(node)))) && get_char(index) == '#') {
+            set_char(index, '0');
+        } else if(isdigit(get_char(get_next_str(get_head_cn_from_tree_node(node)))) && get_char(index) == '@') {
+            set_char(index, '_');
             insert_before(out_string, index, '[');
-            c_node* t_index = node->data->tail;
-            while(t_index->character != '_') {
-                insert_after(out_string, index, t_index->character);
-                t_index = t_index->previous;
+            c_node* t_index = get_tail_str(get_data(node));
+            while(get_char(t_index) != '_') {
+                insert_after(out_string, index, get_char(t_index));
+                to_prev_list(&t_index);
             }
         }
     }
-    if(node->data->head->character == '*' && index->character == '#') {
+    if(get_char(get_head_cn_from_tree_node(node)) == '*' && get_char(index) == '#') {
         set_char(index, '+');
 
-        if(!is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, '@');
-            insert_after(out_string, index, '@');
-            insert_before(out_string, index->previous, '*');
-            insert_after(out_string, index->next, '*');
-            insert_before(out_string, index->previous->previous, '#');
-            insert_after(out_string, index->next->next, '#');
-            insert_before(out_string, index->previous->previous->previous, '[');
-            insert_after(out_string, index->next->next->next, ']');
+        if(!is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && !is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
+            insert_before_l(out_string, index, "[#*@");
+            insert_after_l(out_string, index, "@*#]");
 
-            c_node* ll_index = index->previous->previous->previous;
-            c_node* lr_index = index->previous;
-            c_node* rl_index = index->next;
-            c_node* rr_index = index->next->next->next;
+            c_node* ll_index = get_prev_str_m(index, 3);
+            c_node* lr_index = get_prev_str_m(index, 1);
+            c_node* rl_index = get_next_str_m(index, 1);
+            c_node* rr_index = get_next_str_m(index, 3);
 
-            derive_node(node->l_child, out_string, ll_index);
-            derive_node(node->r_child, out_string, lr_index);
-            derive_node(node->l_child, out_string, rl_index);
-            derive_node(node->r_child, out_string, rr_index);
-        } else if(is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, '@');
-            insert_before(out_string, index->previous, '*');
-            insert_before(out_string, index->previous->previous, ']');
-            insert_before(out_string, index->previous->previous->previous, '#');
-            insert_before(out_string, index->previous->previous->previous->previous, '[');
-            insert_before(out_string, index->previous->previous->previous->previous->previous, '[');
-            insert_after(out_string, index, '[');
-            insert_after(out_string, index->next, '@');
-            insert_after(out_string, index->next->next, ']');
-            insert_after(out_string, index->next->next->next, '*');
-            insert_after(out_string, index->next->next->next->next, '#');
-            insert_after(out_string, index->next->next->next->next->next, ']');
+            derive_node(get_l_child(node), out_string, ll_index);
+            derive_node(get_r_child(node), out_string, lr_index);
+            derive_node(get_l_child(node), out_string, rl_index);
+            derive_node(get_r_child(node), out_string, rr_index);
+        } else if(is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && !is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
+            insert_before_l(out_string, index, "[[#]*@");
+            insert_after_l(out_string, index, "[@]*#]");
 
-            c_node* ll_index = index->previous->previous->previous->previous;
-            c_node* lr_index = index->previous;
-            c_node* rl_index = index->next->next;
-            c_node* rr_index = index->next->next->next->next->next;
+            c_node* ll_index = get_prev_str_m(index, 4);
+            c_node* lr_index = get_prev_str_m(index, 1);
+            c_node* rl_index = get_next_str_m(index, 2);
+            c_node* rr_index = get_next_str_m(index, 5);
 
-            derive_node(node->l_child, out_string, ll_index);
-            derive_node(node->r_child, out_string, lr_index);
-            derive_node(node->l_child, out_string, rl_index);
-            derive_node(node->r_child, out_string, rr_index);
-        } else if(!is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '@');
-            insert_before(out_string, index->previous->previous, '[');
-            insert_before(out_string, index->previous->previous->previous, '*');
-            insert_before(out_string, index->previous->previous->previous->previous, '#');
-            insert_before(out_string, index->previous->previous->previous->previous->previous, '[');
-            insert_after(out_string, index, '@');
-            insert_after(out_string, index->next, '*');
-            insert_after(out_string, index->next->next, '[');
-            insert_after(out_string, index->next->next->next, '#');
-            insert_after(out_string, index->next->next->next->next, ']');
-            insert_after(out_string, index->next->next->next->next->next, ']');
+            derive_node(get_l_child(node), out_string, ll_index);
+            derive_node(get_r_child(node), out_string, lr_index);
+            derive_node(get_l_child(node), out_string, rl_index);
+            derive_node(get_r_child(node), out_string, rr_index);
+        } else if(!is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
+            insert_before_l(out_string, index, "[#*[@]");
+            insert_after_l(out_string, index, "@*[#]]");
 
-            c_node* ll_index = index->previous->previous->previous->previous->previous;
-            c_node* lr_index = index->previous->previous;
-            c_node* rl_index = index->next;
-            c_node* rr_index = index->next->next->next->next;
+            c_node* ll_index = get_prev_str_m(index, 5);
+            c_node* lr_index = get_prev_str_m(index, 2);
+            c_node* rl_index = get_next_str_m(index, 1);
+            c_node* rr_index = get_next_str_m(index, 4);
 
-            derive_node(node->l_child, out_string, ll_index);
-            derive_node(node->r_child, out_string, lr_index);
-            derive_node(node->l_child, out_string, rl_index);
-            derive_node(node->r_child, out_string, rr_index);
-        } else if(is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, ']');
-            insert_after(out_string, index, '[');
-            insert_before(out_string, index->previous, '@');
-            insert_after(out_string, index->next, '@');
-            insert_before(out_string, index->previous->previous, '[');
-            insert_after(out_string, index->next->next, ']');
-            insert_before(out_string, index->previous->previous->previous, '*');
-            insert_after(out_string, index->next->next->next, '*');
-            insert_before(out_string, index->previous->previous->previous->previous, ']');
-            insert_after(out_string, index->next->next->next->next, '[');
-            insert_before(out_string, index->previous->previous->previous->previous->previous, '#');
-            insert_after(out_string, index->next->next->next->next->next, '#');
-            insert_before(out_string, index->previous->previous->previous->previous->previous->previous, '[');
-            insert_after(out_string, index->next->next->next->next->next->next, ']');
-            insert_before(out_string, index->previous->previous->previous->previous->previous->previous->previous, '[');
-            insert_after(out_string, index->next->next->next->next->next->next->next, ']');
+            derive_node(get_l_child(node), out_string, ll_index);
+            derive_node(get_r_child(node), out_string, lr_index);
+            derive_node(get_l_child(node), out_string, rl_index);
+            derive_node(get_r_child(node), out_string, rr_index);
+        } else if(is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
+            insert_before_l(out_string, index, "[[#]*[@]");
+            insert_after_l(out_string, index, "[@]*[#]]");
 
-            c_node* ll_index = index->previous->previous->previous->previous->previous->previous;
-            c_node* lr_index = index->previous->previous;
-            c_node* rl_index = index->next->next;
-            c_node* rr_index = index->next->next->next->next->next->next;
+            c_node* ll_index = get_prev_str_m(index, 6);
+            c_node* lr_index = get_prev_str_m(index, 2);
+            c_node* rl_index = get_next_str_m(index, 2);
+            c_node* rr_index = get_next_str_m(index, 6);
 
-            derive_node(node->l_child, out_string, ll_index);
-            derive_node(node->r_child, out_string, lr_index);
-            derive_node(node->l_child, out_string, rl_index);
-            derive_node(node->r_child, out_string, rr_index);
+            derive_node(get_l_child(node), out_string, ll_index);
+            derive_node(get_r_child(node), out_string, lr_index);
+            derive_node(get_l_child(node), out_string, rl_index);
+            derive_node(get_r_child(node), out_string, rr_index);
         } 
-    } else if(node->data->head->character == '/' && index->character == '#') {
+    } else if(get_char(get_head_cn_from_tree_node(node)) == '/' && get_char(index) == '#') {
         set_char(index, '-');
 
-        if(!is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, '@');
-            insert_before(out_string, index->previous, '*');
-            insert_before(out_string, index->previous->previous, '#');
-            insert_before(out_string, index->previous->previous->previous, '[');
-            insert_after(out_string, index, '@');
-            insert_after(out_string, index->next, '*');
-            insert_after(out_string, index->next->next, '#');
-            insert_after(out_string, index->next->next->next, ']');
-            insert_after(out_string, index->next->next->next->next, '/');
-            insert_after(out_string, index->next->next->next->next->next, '[');
-            insert_after(out_string, index->next->next->next->next->next->next, '@');
-            insert_after(out_string, index->next->next->next->next->next->next->next, '^');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next, '2');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next, ']');
-            
+        if(!is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && !is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
+            insert_before_l(out_string, index, "[#*@");
+            insert_after_l(out_string, index, "@*#]/[@^2]");
 
-            c_node* ll_index = index->previous->previous->previous;
-            c_node* lr_index = index->previous;
-            c_node* rl_index = index->next;
-            c_node* rr_index = index->next->next->next;
-            c_node* d_index = index->next->next->next->next->next->next->next;
+            c_node* ll_index = get_prev_str_m(index, 3);
+            c_node* lr_index = get_prev_str_m(index, 1);
+            c_node* rl_index = get_next_str_m(index, 1);
+            c_node* rr_index = get_next_str_m(index, 3);
+            c_node* d_index = get_next_str_m(index, 7);
 
-            derive_node(node->l_child, out_string, ll_index);
-            derive_node(node->r_child, out_string, lr_index);
-            derive_node(node->l_child, out_string, rl_index);
-            derive_node(node->r_child, out_string, rr_index);
-            derive_node(node->r_child, out_string, d_index);
-        } else if(is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, '@');
-            insert_before(out_string, index->previous, '*');
-            insert_before(out_string, index->previous->previous, ']');
-            insert_before(out_string, index->previous->previous->previous, '#');
-            insert_before(out_string, index->previous->previous->previous->previous, '[');
-            insert_before(out_string, index->previous->previous->previous->previous->previous, '[');
-            insert_after(out_string, index, '[');
-            insert_after(out_string, index->next, '@');
-            insert_after(out_string, index->next->next, ']');
-            insert_after(out_string, index->next->next->next, '*');
-            insert_after(out_string, index->next->next->next->next, '#');
-            insert_after(out_string, index->next->next->next->next->next, ']');
-            insert_after(out_string, index->next->next->next->next->next->next, '/');
-            insert_after(out_string, index->next->next->next->next->next->next->next, '[');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next, '@');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next, '^');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next, '2');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next, ']');
+            derive_node(get_l_child(node), out_string, ll_index);
+            derive_node(get_r_child(node), out_string, lr_index);
+            derive_node(get_l_child(node), out_string, rl_index);
+            derive_node(get_r_child(node), out_string, rr_index);
+            derive_node(get_r_child(node), out_string, d_index);
+        } else if(is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && !is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
+            insert_before_l(out_string, index, "[[#]*@");
+            insert_after_l(out_string, index, "[@]*#]/[@^2]");
 
-            c_node* ll_index = index->previous->previous->previous->previous;
-            c_node* lr_index = index->previous;
-            c_node* rl_index = index->next->next;
-            c_node* rr_index = index->next->next->next->next->next;
-            c_node* d_index = index->next->next->next->next->next->next->next->next->next;
+            c_node* ll_index = get_prev_str_m(index, 4);
+            c_node* lr_index = get_prev_str_m(index, 1);
+            c_node* rl_index = get_next_str_m(index, 2);
+            c_node* rr_index = get_next_str_m(index, 5);
+            c_node* d_index = get_next_str_m(index, 9);
 
-            derive_node(node->l_child, out_string, ll_index);
-            derive_node(node->r_child, out_string, lr_index);
-            derive_node(node->l_child, out_string, rl_index);
-            derive_node(node->r_child, out_string, rr_index);
-            derive_node(node->r_child, out_string, d_index);
-        } else if(!is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '@');
-            insert_before(out_string, index->previous->previous, '[');
-            insert_before(out_string, index->previous->previous->previous, '*');
-            insert_before(out_string, index->previous->previous->previous->previous, '#');
-            insert_before(out_string, index->previous->previous->previous->previous->previous, '[');
-            insert_after(out_string, index, '@');
-            insert_after(out_string, index->next, '*');
-            insert_after(out_string, index->next->next, '[');
-            insert_after(out_string, index->next->next->next, '#');
-            insert_after(out_string, index->next->next->next->next, ']');
-            insert_after(out_string, index->next->next->next->next->next, ']');
-            insert_after(out_string, index->next->next->next->next->next->next, '/');
-            insert_after(out_string, index->next->next->next->next->next->next->next, '[');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next, '[');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next, '@');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next, ']');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next, '^');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next->next, '2');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next->next->next, ']');
+            derive_node(get_l_child(node), out_string, ll_index);
+            derive_node(get_r_child(node), out_string, lr_index);
+            derive_node(get_l_child(node), out_string, rl_index);
+            derive_node(get_r_child(node), out_string, rr_index);
+            derive_node(get_r_child(node), out_string, d_index);
+        } else if(!is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
+            insert_before_l(out_string, index, "[#*[@]");
+            insert_after_l(out_string, index, "@*[#]]/[[@]^2]");
 
-            c_node* ll_index = index->previous->previous->previous->previous->previous;
-            c_node* lr_index = index->previous->previous;
-            c_node* rl_index = index->next;
-            c_node* rr_index = index->next->next->next->next;
-            c_node* d_index = index->next->next->next->next->next->next->next->next->next->next;
+            c_node* ll_index = get_prev_str_m(index, 5);
+            c_node* lr_index = get_prev_str_m(index, 2);
+            c_node* rl_index = get_next_str_m(index, 1);
+            c_node* rr_index = get_next_str_m(index, 4);
+            c_node* d_index = get_next_str_m(index, 10);
 
-            derive_node(node->l_child, out_string, ll_index);
-            derive_node(node->r_child, out_string, lr_index);
-            derive_node(node->l_child, out_string, rl_index);
-            derive_node(node->r_child, out_string, rr_index);
-            derive_node(node->r_child, out_string, d_index);
-        } else if(is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '@');
-            insert_before(out_string, index->previous->previous, '[');
-            insert_before(out_string, index->previous->previous->previous, '*');
-            insert_before(out_string, index->previous->previous->previous->previous, ']');
-            insert_before(out_string, index->previous->previous->previous->previous->previous, '#');
-            insert_before(out_string, index->previous->previous->previous->previous->previous->previous, '[');
-            insert_before(out_string, index->previous->previous->previous->previous->previous->previous->previous, '[');
-            insert_after(out_string, index, '[');
-            insert_after(out_string, index->next, '@');
-            insert_after(out_string, index->next->next, ']');
-            insert_after(out_string, index->next->next->next, '*');
-            insert_after(out_string, index->next->next->next->next, '[');
-            insert_after(out_string, index->next->next->next->next->next, '#');
-            insert_after(out_string, index->next->next->next->next->next->next, ']');
-            insert_after(out_string, index->next->next->next->next->next->next->next, ']');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next, '/');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next, '[');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next, '[');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next, '@');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next->next, ']');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next->next->next, '^');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next->next->next->next, '2');
-            insert_after(out_string, index->next->next->next->next->next->next->next->next->next->next->next->next->next->next->next, ']');
+            derive_node(get_l_child(node), out_string, ll_index);
+            derive_node(get_r_child(node), out_string, lr_index);
+            derive_node(get_l_child(node), out_string, rl_index);
+            derive_node(get_r_child(node), out_string, rr_index);
+            derive_node(get_r_child(node), out_string, d_index);
+        } else if(is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
+            insert_before_l(out_string, index, "[[#]*[@]");
+            insert_after_l(out_string, index, "[@]*[#]]/[[@]^2]");
 
-            c_node* ll_index = index->previous->previous->previous->previous->previous->previous;
-            c_node* lr_index = index->previous->previous;
-            c_node* rl_index = index->next->next;
-            c_node* rr_index = index->next->next->next->next->next->next;
-            c_node* d_index = index->next->next->next->next->next->next->next->next->next->next->next->next;
+            c_node* ll_index = get_prev_str_m(index, 6);
+            c_node* lr_index = get_prev_str_m(index, 2);
+            c_node* rl_index = get_next_str_m(index, 2);
+            c_node* rr_index = get_next_str_m(index, 6);
+            c_node* d_index = get_next_str_m(index, 12);
 
-            derive_node(node->l_child, out_string, ll_index);
-            derive_node(node->r_child, out_string, lr_index);
-            derive_node(node->l_child, out_string, rl_index);
-            derive_node(node->r_child, out_string, rr_index);
-            derive_node(node->r_child, out_string, d_index);
+            derive_node(get_l_child(node), out_string, ll_index);
+            derive_node(get_r_child(node), out_string, lr_index);
+            derive_node(get_l_child(node), out_string, rl_index);
+            derive_node(get_r_child(node), out_string, rr_index);
+            derive_node(get_r_child(node), out_string, d_index);
         } 
-    } else if((node->data->head->character == '+' || node->data->head->character == '-') && index->character == '#') {
-        if(node->data->head->character == '+') {
+    } else if((get_char(get_head_cn_from_tree_node(node)) == '+' || get_char(get_head_cn_from_tree_node(node)) == '-') && get_char(index) == '#') {
+        if(get_char(get_head_cn_from_tree_node(node)) == '+') {
             set_char(index, '+');
         }
-        if(node->data->head->character == '-') {
+        if(get_char(get_head_cn_from_tree_node(node)) == '-') {
             set_char(index, '-');
         }
             
 
-        if(!is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
+        if(!is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && !is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
             insert_before(out_string, index, '#');
             insert_after(out_string, index, '#');
 
-            c_node* l_index = index->previous;
-            c_node* r_index = index->next;
+            c_node* l_index = get_prev_str(index);
+            c_node* r_index = get_next_str(index);
 
-            derive_node(node->l_child, out_string, l_index);
-            derive_node(node->r_child, out_string, r_index);
-        } else if(is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
+            derive_node(get_l_child(node), out_string, l_index);
+            derive_node(get_r_child(node), out_string, r_index);
+        } else if(is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && !is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
             insert_before(out_string, index, '#');
-            insert_after(out_string, index, '[');
-            insert_after(out_string, index->next, '#');
-            insert_after(out_string, index->next->next, ']');
+            insert_after_l(out_string, index, "[#]");
 
-            c_node* l_index = index->previous;
-            c_node* r_index = index->next->next;
+            c_node* l_index = get_prev_str(index);
+            c_node* r_index = get_next_str(get_next_str(index));
 
-            derive_node(node->l_child, out_string, l_index);
-            derive_node(node->r_child, out_string, r_index);
-        } else if(!is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '#');
-            insert_before(out_string, index->previous->previous, '[');
+            derive_node(get_l_child(node), out_string, l_index);
+            derive_node(get_r_child(node), out_string, r_index);
+        } else if(!is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
+            insert_before_l(out_string, index, "[#]");
             insert_after(out_string, index, '#');
 
-            c_node* l_index = index->previous->previous;
-            c_node* r_index = index->next;
+            c_node* l_index = get_prev_str(get_prev_str(index));
+            c_node* r_index = get_next_str(index);
 
-            derive_node(node->l_child, out_string, l_index);
-            derive_node(node->r_child, out_string, r_index);
-        } else if(is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '#');
-            insert_before(out_string, index->previous->previous, '[');
-            insert_after(out_string, index, '[');
-            insert_after(out_string, index->next, '#');
-            insert_after(out_string, index->next->next, ']');
+            derive_node(get_l_child(node), out_string, l_index);
+            derive_node(get_r_child(node), out_string, r_index);
+        } else if(is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
+            insert_before_l(out_string, index, "[#]");
+            insert_after_l(out_string, index, "[#]");
 
-            c_node* l_index = index->previous->previous;
-            c_node* r_index = index->next->next;
+            c_node* l_index = get_prev_str(get_prev_str(index));
+            c_node* r_index = get_next_str(get_next_str(index));
 
-            derive_node(node->l_child, out_string, l_index);
-            derive_node(node->r_child, out_string, r_index);
+            derive_node(get_l_child(node), out_string, l_index);
+            derive_node(get_r_child(node), out_string, r_index);
         }
-    } else if(node->data->head->character == '^' && index->character == '#' && (is_operator(node->l_child->data->head->character) || node->l_child->data->head->character == 'x')) {
+    } else if(get_char(get_head_cn_from_tree_node(node)) == '^' && get_char(index) == '#' && (is_operator(get_char(get_head_str(get_data(get_l_child(node))))) || get_char(get_head_str(get_data(get_l_child(node)))) == 'x')) {
         set_char(index, '^');
 
-        insert_before(out_string, index, ']');
-        insert_before(out_string, index->previous, '@');
-        insert_before(out_string, index->previous->previous, '[');
-        insert_before(out_string, index->previous->previous->previous, '*');
+        insert_before_l(out_string, index, "*[@]");
 
-        c_node* t_index = node->r_child->data->head;
+        c_node* t_index = get_head_str(get_data(get_r_child(node)));
         int digits = 0;
         while(t_index != NULL) {
-            insert_before(out_string, index->previous->previous->previous->previous, t_index->character);
-            t_index = t_index->next;
+            insert_before(out_string, get_prev_str(get_prev_str(get_prev_str(get_prev_str(index)))), get_char(t_index));
+            to_next_list(&t_index);
             digits++;
         }
-        t_index = index->previous->previous->previous->previous;
+        t_index = get_prev_str(get_prev_str(get_prev_str(get_prev_str(index))));
         for(int i = 0 ; i < digits ; i++) {
-            t_index = t_index->previous;
+            to_prev_list(&t_index);
         }
-        insert_before(out_string, t_index, '[');
-        insert_before(out_string, t_index->previous, '[');
+        insert_before_l(out_string, t_index, "[[");
 
         string* new_exponent_str = (string*)malloc(sizeof(string));
         create_string(new_exponent_str);
-        int exponent = get_number(node->r_child->data);
+        int exponent = get_number(get_data(get_r_child(node)));
         exponent--;
         to_string(new_exponent_str, exponent);
 
         digits = 0;
-        t_index = new_exponent_str->tail;
+        t_index = get_tail_str(new_exponent_str);
         while(t_index != NULL) {
-            insert_after(out_string, index, t_index->character);
-            t_index = t_index->previous;
+            insert_after(out_string, index, get_char(t_index));
+            to_prev_list(&t_index);
             digits++;
         }
         t_index = index;
         for(int i = 0 ; i < digits ; i++) {
-            t_index = t_index->next;
+            to_next_list(&t_index);
         }
-        insert_after(out_string, t_index, ']');
-        insert_after(out_string, t_index->next, '*');
-        insert_after(out_string, t_index->next->next, '[');
-        insert_after(out_string, t_index->next->next->next, '#');
-        insert_after(out_string, t_index->next->next->next->next, ']');
-        insert_after(out_string, t_index->next->next->next->next->next, ']');
+        insert_after_l(out_string, t_index, "*[#]]");
 
-        c_node* r_index = t_index->next->next->next->next;
-        c_node* l_index = index->previous->previous;
+        c_node* r_index = get_next_str(get_next_str(get_next_str(get_next_str(t_index))));
+        c_node* l_index = get_prev_str(get_prev_str(index));
         delete_string(new_exponent_str);
 
-        derive_node(node->l_child, out_string, l_index);
-        derive_node(node->l_child, out_string, r_index);
-    } else if(node->data->head->character == '^' && index->character == '@' && is_operator(node->l_child->data->head->character)) {
-        index->character = '^';
-        insert_before(out_string, index, ']');
-        insert_before(out_string, index->previous, '@');
-        insert_before(out_string, index->previous->previous, '[');
-        c_node* t_index = node->r_child->data->tail;
+        derive_node(get_l_child(node), out_string, l_index);
+        derive_node(get_r_child(node), out_string, r_index);
+    } else if(get_char(get_head_cn_from_tree_node(node)) == '^' && get_char(index) == '@' && is_operator(get_char(get_head_str(get_data(get_l_child(node)))))) {
+        set_char(index, '^');
+        insert_before_l(out_string, index, "[@]");
+        c_node* t_index = get_tail_str(get_data(get_r_child(node)));
         while(t_index != NULL) {
-            insert_after(out_string, index, t_index->character);
-            t_index = t_index->previous;
+            insert_after(out_string, index, get_char(t_index));
+            to_prev_list(&t_index);
         }
-        derive_node(node->l_child, out_string, index->previous->previous);
-    } else if(node->data->head->character == '^' && index->character == '#' && isdigit(node->l_child->data->head->character)) {
-        index->character = '0';
-    } else if(node->data->head->character == '^' && index->character == '@' && isdigit(node->l_child->data->head->character)) {
-        index->character = '^';
-        c_node* t_index = node->r_child->data->tail;
+        derive_node(get_l_child(node), out_string, get_prev_str(get_prev_str(index)));
+    } else if(get_char(get_head_cn_from_tree_node(node)) == '^' && get_char(index) == '#' && isdigit(get_char(get_head_str(get_data(get_l_child(node)))))) {
+        set_char(index, '0');
+    } else if(get_char(get_head_cn_from_tree_node(node)) == '^' && get_char(index) == '@' && isdigit(get_char(get_head_str(get_data(get_l_child(node)))))) {
+        set_char(index, '^');
+        c_node* t_index = get_tail_str(get_data(get_r_child(node)));
         while(t_index != NULL) {
-            insert_after(out_string, index, t_index->character);
-            t_index = t_index->previous;
+            insert_after(out_string, index, get_char(t_index));
+            to_prev_list(&t_index);
         }
-        t_index = node->l_child->data->head;
+        t_index = get_head_str(get_data(get_l_child(node)));
         while(t_index != NULL) {
-            insert_before(out_string, index, t_index->character);
-            t_index = t_index->next;
+            insert_before(out_string, index, get_char(t_index));
+            to_next_list(&t_index);
         }
-    } else if(node->data->head->character == '^' && index->character == '@' && node->l_child->data->head->character == 'x') {
-        index->character = '^';
+    } else if(get_char(get_head_cn_from_tree_node(node)) == '^' && get_char(index) == '@' && get_char(get_head_str(get_data(get_l_child(node)))) == 'x') {
+        set_char(index, '^');
         insert_before(out_string, index, 'x');
-        c_node* t_index = node->r_child->data->tail;
+        c_node* t_index = get_tail_str(get_data(get_r_child(node)));
         while(t_index != NULL) {
-            insert_after(out_string, index, t_index->character);
-            t_index = t_index->previous;
+            insert_after(out_string, index, get_char(t_index));
+            to_prev_list(&t_index);
         }
-    } else if(index->character == '@' && node->data->head->character == '+') {
-        index->character = '+';
+    } else if(get_char(index) == '@' && (get_char(get_head_cn_from_tree_node(node)) == '+' || get_char(get_head_cn_from_tree_node(node)) == '-' || get_char(get_head_cn_from_tree_node(node)) == '*' || get_char(get_head_cn_from_tree_node(node)) == '/')) {
+        if(get_char(get_head_cn_from_tree_node(node)) == '+') {
+            set_char(index, '+');
+        } else if(get_char(get_head_cn_from_tree_node(node)) == '-') {
+            set_char(index, '-');
+        } else if(get_char(get_head_cn_from_tree_node(node)) == '*') {
+            set_char(index, '*');
+        } else if(get_char(get_head_cn_from_tree_node(node)) == '/') {
+            set_char(index, '/');
+        }
 
-        if(!is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
+        if(!is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && !is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
             insert_after(out_string, index, '@');
             insert_before(out_string, index, '@');
-            derive_node(node->l_child, out_string, index->previous);
-            derive_node(node->r_child, out_string, index->next);
-        } else if(is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
+            derive_node(get_l_child(node), out_string, get_prev_str(index));
+            derive_node(get_r_child(node), out_string, get_next_str(index));
+        } else if(is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && !is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
             insert_after(out_string, index, '@');
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '@');
-            insert_before(out_string, index->previous->previous, '[');
-            derive_node(node->l_child, out_string, index->previous->previous);
-            derive_node(node->r_child, out_string, index->next);
-        } else if(!is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_after(out_string, index, '[');
+            insert_before_l(out_string, index, "[@]");
+            derive_node(get_l_child(node), out_string, get_prev_str(get_prev_str(index)));
+            derive_node(get_r_child(node), out_string, get_next_str(index));
+        } else if(!is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
+            insert_after_l(out_string, index, "[@]");
             insert_before(out_string, index, '@');
-            insert_after(out_string, index->next, '@');
-            insert_after(out_string, index->next->next, ']');
-            derive_node(node->l_child, out_string, index->previous);
-            derive_node(node->r_child, out_string, index->next->next);
-        } else if(is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '@');
-            insert_before(out_string, index->previous->previous, '[');
-            insert_after(out_string, index, '[');
-            insert_after(out_string, index->next, '@');
-            insert_after(out_string, index->next->next, ']');
-            derive_node(node->r_child, out_string, index->next->next);
-            derive_node(node->l_child, out_string, index->previous->previous);
+            derive_node(get_l_child(node), out_string, get_prev_str(index));
+            derive_node(get_r_child(node), out_string, get_next_str(get_next_str(index)));
+        } else if(is_operator(get_char(get_head_str(get_data(get_l_child(node))))) && is_operator(get_char(get_head_str(get_data(get_r_child(node)))))) {
+            insert_before_l(out_string, index, "[@]");
+            insert_after_l(out_string, index, "[@]");
+            derive_node(get_r_child(node), out_string, get_next_str(get_next_str(index)));
+            derive_node(get_l_child(node), out_string, get_prev_str(get_prev_str(index)));
         }
-    } else if(index->character == '@' && node->data->head->character == '-') {
-        index->character = '-';
-
-        if(!is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
-            insert_after(out_string, index, '@');
-            insert_before(out_string, index, '@');
-            derive_node(node->l_child, out_string, index->previous);
-            derive_node(node->r_child, out_string, index->next);
-        } else if(is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
-            insert_after(out_string, index, '@');
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '@');
-            insert_before(out_string, index->previous->previous, '[');
-            derive_node(node->l_child, out_string, index->previous->previous);
-            derive_node(node->r_child, out_string, index->next);
-        } else if(!is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_after(out_string, index, '[');
-            insert_before(out_string, index, '@');
-            insert_after(out_string, index->next, '@');
-            insert_after(out_string, index->next->next, ']');
-            derive_node(node->l_child, out_string, index->previous);
-            derive_node(node->r_child, out_string, index->next->next);
-        } else if(is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '@');
-            insert_before(out_string, index->previous->previous, '[');
-            insert_after(out_string, index, '[');
-            insert_after(out_string, index->next, '@');
-            insert_after(out_string, index->next->next, ']');
-            derive_node(node->r_child, out_string, index->next->next);
-            derive_node(node->l_child, out_string, index->previous->previous);
+    } else if(get_char(get_head_cn_from_tree_node(node)) == 'x' && get_char(index) == '@') {
+        set_char(index, 'x');
+    } else if(get_char(get_head_cn_from_tree_node(node)) == 'x' && get_char(index) == '#') {
+        set_char(index, '1');
+    } else if(isdigit(get_char(get_head_cn_from_tree_node(node))) && get_char(index) == '@') {
+        set_char(index, get_char(get_head_cn_from_tree_node(node)));
+        c_node* t_index = get_tail_str(get_data(node));
+        while(t_index != get_head_str(get_data(node))) {
+            insert_after(out_string, index, get_char(t_index));
+            to_prev_list(&t_index);
         }
-    } else if(index->character == '@' && node->data->head->character == '*') {
-        index->character = '*';
-
-        if(!is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
-            insert_after(out_string, index, '@');
-            insert_before(out_string, index, '@');
-            derive_node(node->l_child, out_string, index->previous);
-            derive_node(node->r_child, out_string, index->next);
-        } else if(is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
-            insert_after(out_string, index, '@');
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '@');
-            insert_before(out_string, index->previous->previous, '[');
-            derive_node(node->l_child, out_string, index->previous->previous);
-            derive_node(node->r_child, out_string, index->next);
-        } else if(!is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_after(out_string, index, '[');
-            insert_before(out_string, index, '@');
-            insert_after(out_string, index->next, '@');
-            insert_after(out_string, index->next->next, ']');
-            derive_node(node->l_child, out_string, index->previous);
-            derive_node(node->r_child, out_string, index->next->next);
-        } else if(is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '@');
-            insert_before(out_string, index->previous->previous, '[');
-            insert_after(out_string, index, '[');
-            insert_after(out_string, index->next, '@');
-            insert_after(out_string, index->next->next, ']');
-            derive_node(node->r_child, out_string, index->next->next);
-            derive_node(node->l_child, out_string, index->previous->previous);
-        }
-    } else if(index->character == '@' && node->data->head->character == '/') {
-        index->character = '/';
-
-        if(!is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
-            insert_after(out_string, index, '@');
-            insert_before(out_string, index, '@');
-            derive_node(node->l_child, out_string, index->previous);
-            derive_node(node->r_child, out_string, index->next);
-        } else if(is_operator(node->l_child->data->head->character) && !is_operator(node->r_child->data->head->character)) {
-            insert_after(out_string, index, '@');
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '@');
-            insert_before(out_string, index->previous->previous, '[');
-            derive_node(node->l_child, out_string, index->previous->previous);
-            derive_node(node->r_child, out_string, index->next);
-        } else if(!is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_after(out_string, index, '[');
-            insert_before(out_string, index, '@');
-            insert_after(out_string, index->next, '@');
-            insert_after(out_string, index->next->next, ']');
-            derive_node(node->l_child, out_string, index->previous);
-            derive_node(node->r_child, out_string, index->next->next);
-        } else if(is_operator(node->l_child->data->head->character) && is_operator(node->r_child->data->head->character)) {
-            insert_before(out_string, index, ']');
-            insert_before(out_string, index->previous, '@');
-            insert_before(out_string, index->previous->previous, '[');
-            insert_after(out_string, index, '[');
-            insert_after(out_string, index->next, '@');
-            insert_after(out_string, index->next->next, ']');
-            derive_node(node->r_child, out_string, index->next->next);
-            derive_node(node->l_child, out_string, index->previous->previous);
-        }
-    } else if(node->data->head->character == 'x' && index->character == '@') {
-        index->character = 'x';
-    } else if(node->data->head->character == 'x' && index->character == '#') {
-        index->character = '1';
-    } else if(isdigit(node->data->head->character) && index->character == '@') {
-        index->character = node->data->head->character;
-        c_node* t_index = node->data->tail;
-        while(t_index != node->data->head) {
-            insert_after(out_string, index, t_index->character);
-            t_index = t_index->previous;
-        }
-    } else if(isdigit(node->data->head->character) && index->character == '#') {
-        index->character = '0';
+    } else if(isdigit(get_char(get_head_cn_from_tree_node(node))) && get_char(index) == '#') {
+        set_char(index, '0');
     }
 
     return 0;

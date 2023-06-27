@@ -60,3 +60,11 @@ int v_substitute(tree_node* node, string* x);
 int delete_from_tree(tree* tree, char key);
 
 tree_node* get_head_tree(tree* in_tree);
+
+c_node* get_head_cn_from_tree_node(tree_node* node);
+
+string* get_data(tree_node* node);
+
+tree_node* get_l_child(tree_node* in_tree);
+
+tree_node* get_r_child(tree_node* in_tree);

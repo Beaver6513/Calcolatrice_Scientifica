@@ -421,3 +421,19 @@ int delete_from_tree(tree* tree, char key) {
     inorder_dc(tree->tree_head, key);
     return 0;
 }
+
+c_node* get_head_cn_from_tree_node(tree_node* node) {
+    return node->data->head;
+}
+
+string* get_data(tree_node* node) {
+    return node->data;
+}
+
+tree_node* get_l_child(tree_node* node) {
+    return node->l_child;
+}
+
+tree_node* get_r_child(tree_node* node) {
+    return node->r_child;
+}
